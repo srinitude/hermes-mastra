@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Bun / Node
+node_modules/
+bun.lock
+*.log
+server/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Env / secrets — never commit
+.env
+.env.local
+
+# Local DB / runtime artifacts
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+mastra.db*
+
+# Mise local state
+.mise.local.toml

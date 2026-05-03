@@ -1,0 +1,31 @@
+manifest_version: 1
+name: mastra
+version: 0.1.0
+description: "Mastra Observational Memory — long-context dense observation log via background Observer/Reflector agents. Per-profile isolation via Mastra resourceId."
+author: "@srinitude"
+homepage: "https://github.com/srinitude/hermes-mastra"
+license: MIT
+kind: exclusive
+category: memory
+
+runtime:
+  platforms:
+    - darwin
+    - linux
+    - win32
+
+pip_dependencies:
+  - httpx
+
+requires_env:
+  - name: VENICE_API_KEY
+    description: "API key used by the default Observer + Reflector models (Venice). Replace observer_api_key_env / reflector_api_key_env in mastra.json to use a different provider."
+    url: "https://venice.ai/settings/api"
+    secret: true
+
+hooks:
+  - on_session_end
+  - on_session_switch
+  - on_pre_compress
+  - on_memory_write
+  - on_delegation

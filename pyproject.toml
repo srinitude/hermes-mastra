@@ -1,0 +1,137 @@
+# Dev/test tooling only. The plugin itself is installed by Hermes via
+# `hermes plugins install srinitude/hermes-mastra` which clones the repo
+# into ~/.hermes/plugins/mastra/ — there is no wheel to publish.
+#
+# This file exists so contributors can:
+#   pip install -e ".[dev]"
+# to get pytest + ruff and run `make test` locally / in CI.
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hermes-mastra-devshell"
+version = "0.0.0"
+description = "Dev/test shell for the hermes-mastra plugin (NOT the runtime — Hermes loads source files directly)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "srinitude" }]
+dependencies = [
+    "httpx>=0.27,<1.0",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "respx>=0.21",
+    "ruff>=0.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/srinitude/hermes-mastra"
+Issues = "https://github.com/srinitude/hermes-mastra/issues"
+
+# No package contents — `pip install -e .` only installs deps so pytest can run.
+[tool.hatch.build.targets.wheel]
+bypass-selection = true
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+# The plugin's `__init__.py` lives at the repo root because that's how
+# Hermes loads it (spec_from_file_location). Tell pytest to ignore it,
+# never auto-init root as a package, and import test modules in isolation
+# via importlib (no rootdir promotion based on neighboring __init__.py).
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--import-mode=importlib",
+    "--ignore=__init__.py",
+    "--ignore=server",
+    "--ignore=scripts",
+]
+markers = [
+    "integration: requires a live Bun server (skipped by default)",
+]
+
+# ---------------------------------------------------------------------------
+# Ruff — formatter + linter, configured to enforce the project size rules.
+# Hard limits enforced via tests/test_code_size_policy.py:
+#   - 200 LOC per file
+#   - 30 LOC per function/class body
+#   - max nesting depth 3 (relative to a function body)
+# Ruff backstops these with PLR0915 (statements per fn) and PLR0911-13/15
+# so violations surface even before the policy test runs.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["server/node_modules", ".venv", "node_modules"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "I", "B", "UP", "RUF",
+    "PL",   # Pylint rules — includes PLR0915 (max statements)
+    "C90",  # mccabe complexity (proxy for nesting)
+]
+ignore = [
+    "E501",     # long lines — line-length already set; tests handle hard caps
+    "PLR0913",  # too-many-arguments — sometimes needed at API boundaries
+    "PLR2004",  # magic numbers in tests
+]
+
+[tool.ruff.lint.pylint]
+# Aligns with project rule: max ~30 LOC per construct. Statements ≈ executable
+# lines; we keep this generous because the authoritative cap is enforced by
+# tests/test_code_size_policy.py. Ruff just gives an early warning.
+max-statements = 30
+max-branches = 8
+max-returns = 6
+max-args = 8
+
+[tool.ruff.lint.mccabe]
+# Cyclomatic complexity is a reasonable proxy for nesting + branching. We
+# tune it so `if/elif/else` chains don't trigger before the depth check does.
+max-complexity = 8
+
+[tool.ruff.lint.per-file-ignores]
+# Tests legitimately use locally-scoped imports for fixture isolation, may have
+# long parametrize tables, and use higher complexity for clarity.
+"tests/**/*.py" = ["PLR0915", "PLR0913", "C901", "PLC0415", "PLR0911", "PLR0912", "F401"]
+# Conftest files often need cross-cutting setup.
+"**/conftest.py" = ["PLR0915", "C901", "PLC0415"]
+# Provider package needs the dual try/except import idiom for Hermes vs standalone.
+"__init__.py" = ["PLC0415"]
+"provider.py" = ["PLC0415"]
+"provider_lifecycle.py" = ["PLC0415"]
+"provider_tools.py" = ["PLC0415"]
+"recall_cache.py" = ["PLC0415"]
+"async_runner_loader.py" = ["PLC0415"]
+"server_env.py" = ["PLC0415"]
+"server_manager.py" = ["PLC0415"]
+"model_config.py" = ["PLC0415"]
+"mastra_options.py" = ["PLC0415"]
+"cli.py" = ["PLC0415"]
+"cli_commands.py" = ["PLC0415"]
+# Module-level singletons + intentional lazy imports + subprocess returncode reads.
+"async_runner.py" = ["PLW0602", "PLW0603"]
+"client.py" = ["PLC0415"]
+"server_config.py" = ["PLC0415"]
+"server_process.py" = ["PLW1510"]
+"agent_observers.py" = ["PLC0415"]
+"tool_observers.py" = ["PLC0415"]
+"memory_rules.py" = ["PLC0415"]
+"scripts/benchmark.py" = ["B007"]
+"scripts/compare_providers.py" = ["PLR0915"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

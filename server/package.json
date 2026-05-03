@@ -1,0 +1,25 @@
+{
+  "name": "hermes-mastra-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "//": "Mastra + AI SDK packages pin to `latest` on purpose: this plugin tracks upstream Mastra at HEAD. Run `mise run compat:mastra` after `bun install` to verify the API surface we depend on still exists. CI does this automatically via the Quality workflow.",
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "latest",
+    "@mastra/core": "latest",
+    "@mastra/libsql": "latest",
+    "@mastra/memory": "latest",
+    "hono": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "latest",
+    "@types/bun": "latest",
+    "typescript": "latest"
+  }
+}

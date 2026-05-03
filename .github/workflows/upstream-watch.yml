@@ -1,0 +1,53 @@
+name: upstream-watch
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: Register Bun + Python globally with mise
+        run: |
+          mise use -g bun@latest
+          mise use -g python@3.11
+
+      - name: Install dependencies via mise
+        run: mise run install
+
+      - name: Install opensrc
+        run: mise run setup:opensrc
+        continue-on-error: true
+
+      - name: Check upstream compatibility
+        run: mise run compat
+        continue-on-error: true
+
+      - name: Refresh Bun deps to latest
+        run: mise run refresh
+        continue-on-error: true
+
+      - name: Run quality on refreshed deps
+        run: mise run quality
+        continue-on-error: true
+
+      - name: Create drift PR if changes detected
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: sync upstream Mastra/Hermes deps"
+          body: |
+            Automated upstream dependency refresh.
+            Run `mise run quality` locally to verify before merging.
+          branch: chore/upstream-sync
+          delete-branch: true
+          labels: dependencies, automated

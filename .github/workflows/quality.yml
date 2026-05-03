@@ -1,0 +1,72 @@
+name: quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.os == 'windows-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: Register tools
+        run: |
+          mise use -g bun@latest
+          mise use -g python@3.11
+
+      - name: Add bun to PATH (Windows)
+        if: runner.os == 'Windows'
+        run: echo "$HOME/.local/share/mise/installs/bun/latest/bin" >> $GITHUB_PATH
+        shell: bash
+
+      - name: Install dependencies via mise
+        run: mise run install
+        shell: bash
+
+      - name: Run canonical quality gate
+        run: mise run quality
+        shell: bash
+        env:
+          CI: "1"
+          PYTHONIOENCODING: "utf-8"
+          PYTHONUTF8: "1"
+
+  compat:
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+
+      - name: Register tools
+        run: |
+          mise use -g bun@latest
+          mise use -g python@3.11
+
+      - name: Install dependencies via mise
+        run: mise run install
+
+      - name: Install opensrc
+        run: mise run setup:opensrc
+        continue-on-error: true
+
+      - name: Run upstream compatibility checks
+        run: mise run compat
+        continue-on-error: true
