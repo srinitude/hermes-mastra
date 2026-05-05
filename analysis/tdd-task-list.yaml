@@ -1,0 +1,209 @@
+# Dynamic TDD task list — Mastra memory plugin upgrade.
+# Phase legend: BOOTSTRAP | RED | GREEN | REFACTOR
+# Status legend: pending | active | blocked | complete
+
+tasks:
+  - id: T01
+    title: Create test_plugin_clash.py covering namespace ownership
+    phase: RED
+    status: pending
+    user_value: "every plugin-owned resource has a stable, collision-free
+      name; users can install Mastra alongside any combination of other
+      Hermes plugins without name conflicts."
+    dependencies: []
+    blocking_tasks: [T05]
+    prerequisites:
+      - analysis/plugin-clash-analysis.md exists
+      - analysis/plugin-contract.md exists
+    source_evidence:
+      files:
+        - ~/.hermes/hermes-agent/hermes_cli/plugins.py
+        - ~/.hermes/hermes-agent/agent/memory_manager.py
+      docs: [plugin-contract.md, plugin-clash-analysis.md]
+      claims:
+        - "kind=exclusive memory plugins go through plugins/memory/ loader"
+        - "tool names are routed by MemoryManager._tool_to_provider"
+        - "register_hook puts callbacks in load order; no priority"
+    validation_steps:
+      - mise run test (file collects without import error)
+      - mise run test -- tests/test_plugin_clash.py (RED — assertions fail
+        only where bugs would, not import errors)
+    ci_cd_commands: [mise run test, mise run lint]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: [no mocks of Hermes runtime; use direct module imports]
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: "delete the new file; nothing else changes."
+    affected_files: [tests/test_plugin_clash.py]
+    completion_evidence: ""
+
+  - id: T02
+    title: Create test_plugin_non_interference.py simulating coexistence
+    phase: RED
+    status: pending
+    user_value: "Mastra never mutates other plugins' state; users can rely
+      on Mastra not breaking observability, kanban, achievements, or any
+      future plugin even if those plugins register the same hooks."
+    dependencies: [T01]
+    blocking_tasks: [T05]
+    prerequisites: [T01]
+    source_evidence:
+      files: [hermes_cli/plugins.py, agent/memory_manager.py, hermes_wiring.py]
+      claims:
+        - "invoke_hook fires every callback; we must not mutate kwargs."
+        - "post_tool_call observers must not change the tool result."
+    validation_steps: [mise run test -- tests/test_plugin_non_interference.py]
+    ci_cd_commands: [mise run test]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: [test plugins live under tests/helpers/, not production code]
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files:
+      - tests/test_plugin_non_interference.py
+      - tests/helpers/fake_plugins.py (NEW)
+    completion_evidence: ""
+
+  - id: T03
+    title: Create test_plugin_load_order_permutations.py
+    phase: RED
+    status: pending
+    user_value: "the plugin behaves identically regardless of the order
+      Hermes loads plugins; users get deterministic recall whether
+      Mastra registers before or after observability/kanban/achievements."
+    dependencies: [T02]
+    blocking_tasks: [T05]
+    prerequisites: [T02]
+    source_evidence:
+      files: [hermes_cli/plugins.py, hermes_wiring.py]
+      claims:
+        - "Hermes loads plugins in directory-scan order; later sources override."
+    validation_steps: [mise run test -- tests/test_plugin_load_order_permutations.py]
+    ci_cd_commands: [mise run test]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: []
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: [tests/test_plugin_load_order_permutations.py]
+    completion_evidence: ""
+
+  - id: T04
+    title: Create test_plugin_failure_isolation.py
+    phase: RED
+    status: pending
+    user_value: "Mastra failures degrade only Mastra; other plugins keep
+      working. Other plugins' failures don't take Mastra down."
+    dependencies: [T03]
+    blocking_tasks: [T05]
+    prerequisites: [T03]
+    source_evidence:
+      files: [agent/memory_manager.py:285-457, hermes_cli/plugins.py:1078-1102]
+      claims:
+        - "MemoryManager catches per-provider exceptions"
+        - "invoke_hook catches per-callback exceptions"
+    validation_steps: [mise run test -- tests/test_plugin_failure_isolation.py]
+    ci_cd_commands: [mise run test]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: []
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: [tests/test_plugin_failure_isolation.py]
+    completion_evidence: ""
+
+  - id: T05
+    title: GREEN — make T01-T04 tests pass without rewriting the plugin
+    phase: GREEN
+    status: pending
+    user_value: "tests written in RED encode the contract the plugin
+      already meets; this task confirms by running them green."
+    dependencies: [T01, T02, T03, T04]
+    blocking_tasks: [T06]
+    prerequisites: [T01, T02, T03, T04]
+    source_evidence:
+      files: [__init__.py, provider_lifecycle.py, hermes_wiring.py,
+              tool_observers.py, agent_observers.py]
+      claims:
+        - "all plugin-owned resources already use stable namespaces"
+        - "no kwarg mutation in any hook callback"
+        - "load order does not change observable behaviour"
+        - "failures are caught at runtime layers we don't touch"
+    validation_steps: [mise run test, mise run quality]
+    ci_cd_commands: [mise run quality]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: [if a real bug shows up, fix it; do NOT relax the test]
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: []
+    completion_evidence: ""
+
+  - id: T06
+    title: RED — test_retrieval_relevance.py for prefetch result quality
+    phase: RED
+    status: pending
+    user_value: "users get RELEVANT recall — the cached snapshot only
+      surfaces when there's something to surface, and never shadows
+      the live request's intent."
+    dependencies: [T05]
+    blocking_tasks: [T07]
+    prerequisites: [T05]
+    source_evidence:
+      files: [provider_lifecycle.py:95-103, recall_cache.py]
+      claims:
+        - "prefetch returns '' when cache empty"
+        - "header line names the active profile"
+        - "session-id mismatch clears cache to prevent stale spillover"
+    validation_steps: [mise run test -- tests/test_retrieval_relevance.py]
+    ci_cd_commands: [mise run test]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: []
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: [tests/test_retrieval_relevance.py]
+    completion_evidence: ""
+
+  - id: T07
+    title: GREEN/REFACTOR — confirm relevance contract
+    phase: GREEN
+    status: pending
+    user_value: "relevance contract is encoded in tests; provider
+      already meets it (verified) or is updated minimally."
+    dependencies: [T06]
+    blocking_tasks: [T08]
+    prerequisites: [T06]
+    source_evidence: {files: [provider_lifecycle.py], docs: [memory-performance-plan.md]}
+    validation_steps: [mise run quality]
+    ci_cd_commands: [mise run quality]
+    styleguide_rules: [<=200 LOC, <=30 LOC per construct, depth<=3]
+    guardrails: []
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: []
+    completion_evidence: ""
+
+  - id: T08
+    title: Final report + acceptance-criteria checklist
+    phase: REFACTOR
+    status: pending
+    user_value: "stakeholders see exactly what changed, what was tested,
+      and what residual risk remains."
+    dependencies: [T07]
+    blocking_tasks: []
+    prerequisites: [T07]
+    source_evidence: {files: [analysis/*]}
+    validation_steps:
+      - "every acceptance criterion has a green checkbox or a documented
+         reason"
+      - mise run quality
+    ci_cd_commands: [mise run quality]
+    styleguide_rules: []
+    guardrails: []
+    learnings: ""
+    gotchas: ""
+    rollback_or_rewind_notes: ""
+    affected_files: [analysis/final-report.md]
+    completion_evidence: ""

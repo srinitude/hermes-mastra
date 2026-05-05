@@ -1,0 +1,126 @@
+# Mastra — extracted knowledge for the Hermes memory plugin
+# Source classification per finding:
+#   primary_source_claim   = stated by Mastra source code
+#   secondary_source_claim = stated by adjacent docs / readme / changelog
+#   source_inference       = derived from reading two or more source files
+#   implementation_inference = derived from runtime behavior in this repo
+#   common_knowledge       = framework conventions, no citation needed
+
+primitives:
+  - name: Memory
+    classification: primary_source_claim
+    citation: /Users/kiren/.opensrc/repos/github.com/mastra-ai/mastra/1.17.5/packages/memory/src/index.ts
+    summary: "central memory class; constructor takes {storage, options}
+              where options is SharedMemoryConfig. Methods we call:
+              saveMessages, recall, updateWorkingMemory, getWorkingMemory,
+              getThreadById, createThread, listThreads."
+
+  - name: LibSQLStore
+    classification: primary_source_claim
+    citation: /Users/kiren/.opensrc/repos/github.com/mastra-ai/mastra/1.32.1/packages/core
+    summary: "LibSQL-backed implementation of MemoryStorage; constructor
+              takes {id, url}. id namespaces tables; url is libsql/sqlite path."
+
+  - name: Agent
+    classification: primary_source_claim
+    citation: /Users/kiren/.opensrc/repos/github.com/mastra-ai/mastra/1.32.1/packages/core/src/agent
+    summary: "Mastra agent abstraction; we instantiate it ONLY as
+              _proxyAgent for on-demand summarization. Construct with
+              {id, name, instructions, model, memory}."
+
+  - name: ObservationalMemory
+    classification: primary_source_claim
+    citation: packages/memory/src/processors/observational-memory/
+    summary: "two-stage memory layer: Observer (high-frequency
+              summarizer) + Reflector (lower-frequency restructurer).
+              Configured via options.observationalMemory.{observation,
+              reflection,scope,temporalMarkers,shareTokenBudget}."
+
+storage_primitives:
+  - finding: "Memory.recall accepts {threadId, resourceId,
+              vectorSearchString?, threadConfig}"
+    classification: primary_source_claim
+    citation: packages/memory/src/index.ts (recallTool import)
+    implication: "we always pass resourceId for tenant filtering."
+  - finding: "saveMessages accepts {messages, memoryConfig} where
+              memoryConfig may set observationalMemory: true to trigger
+              the Observer + Reflector pipeline"
+    classification: primary_source_claim
+    citation: server/src/routes-memory.ts:40-44
+
+retrieval_primitives:
+  - finding: "semanticRecall takes {topK} and runs vector search over
+              the resource's threads"
+    classification: primary_source_claim
+    citation: server/src/routes-memory.ts:118-124
+  - finding: "lastMessages bounds verbatim history; older content is
+              summarized into observations"
+    classification: source_inference
+    citation: server/src/resources.ts:43-44 + Mastra memory README
+
+agent_primitives:
+  - finding: "Agents bind a Memory instance and a model; tools optional"
+    classification: primary_source_claim
+    citation: server/src/resources.ts:59-65
+
+workflow_primitives:
+  - finding: "workflows are not used by this plugin"
+    classification: implementation_inference
+    citation: server/src/ (none import @mastra/core/workflows)
+
+tool_primitives:
+  - finding: "Mastra Memory ships built-in tools (recallTool,
+              updateWorkingMemoryTool); we do NOT expose those to
+              Hermes — instead we expose three Hermes-side tool wrappers
+              (mastra_recall, mastra_search, mastra_observe)."
+    classification: implementation_inference
+    citation: tool_schemas.py + provider_tools.py
+
+model_provider_behavior:
+  - finding: "createOpenAICompatible({baseURL, apiKey})(modelName) is
+              the canonical provider factory for non-first-class
+              providers (Venice, Ollama, etc.)"
+    classification: primary_source_claim
+    citation: server/src/resources.ts:21-38
+  - finding: "Default model: gemini-3-flash-preview (Observer),
+              gemini-3-1-pro-preview (Reflector); both behind Venice."
+    classification: implementation_inference
+    citation: server/src/config.ts:16,21
+
+eval_observability:
+  - finding: "Memory operations emit ObservabilityContext + spans of
+              type SpanType when an observability adapter is attached"
+    classification: primary_source_claim
+    citation: packages/memory/src/index.ts:16-19
+    implication: "we currently attach NO observability adapter; tracing
+                  is a no-op until we opt in."
+
+recommended_patterns:
+  - "Use scope=resource for working memory to span sessions inside a profile."
+  - "Use scope=thread for observational memory to keep session-scoped recall."
+  - "Pass resourceId on EVERY recall/save/list call to enforce isolation."
+  - "Coalesce concurrent recall requests in the client to avoid pile-up."
+
+discouraged_patterns:
+  - "Calling memory.* without resourceId — leaks across profiles."
+  - "Reusing the same threadId across resources — undefined behaviour."
+  - "Holding the Mastra storage handle in module state across processes
+    — Mastra is not multi-process safe with LibSQL."
+
+version_caveats:
+  - "@mastra/memory@1.17+ ships overly-strict types that mismatch our
+    Hono signatures even though runtime is correct; mise typecheck is
+    advisory (mise.toml comment confirms)."
+  - "@mastra/* tracks 'latest'; deps:refresh task drops bun.lock so
+    semver actually walks forward."
+
+performance_guidance:
+  - "lastMessages: 20 is a soft default; lower for low-token agents."
+  - "shareTokenBudget: false isolates Observer cost from primary agent
+    budget — we set this default."
+  - "Coalesce recall requests; ours uses an in-flight flag."
+
+security_isolation:
+  - "Memory rows are filtered by resourceId at the DB layer; trust this."
+  - "Cross-resource access requires explicit listThreads({filter:{resourceId}})
+    — there is no implicit fan-out."

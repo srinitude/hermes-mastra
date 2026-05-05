@@ -1,0 +1,126 @@
+memory_plugin:
+  plugin_id: mastra
+  version: "0.1.0"
+  kind: exclusive
+  category: memory
+  source_root: https://github.com/srinitude/hermes-mastra
+
+  compatible_with:
+    - plugin_id: builtin
+      version_range: "*"
+      shared_resources: [memory_provider_registry, on_memory_write_hook,
+                         on_pre_compress_hook, on_session_switch_hook]
+      possible_conflicts: []
+      required_tests: [tests/test_memory_md_integration.py,
+                       tests/test_compression_integration.py]
+      status: compatible
+
+    - plugin_id: hermes-achievements
+      version_range: "*"
+      shared_resources: [post_tool_call hook]
+      possible_conflicts: []  # observer-only
+      required_tests: [tests/test_plugin_load_order_permutations.py]
+      status: compatible
+
+    - plugin_id: kanban
+      version_range: "*"
+      shared_resources: [post_tool_call hook, on_session_finalize hook]
+      possible_conflicts: []
+      required_tests: [tests/test_plugin_load_order_permutations.py]
+      status: compatible
+
+    - plugin_id: observability
+      version_range: "*"
+      shared_resources: [pre_tool_call, post_tool_call, pre_llm_call,
+                         post_llm_call hooks]
+      possible_conflicts: []  # both observer-only
+      required_tests: [tests/test_plugin_load_order_permutations.py]
+      status: compatible
+
+    - plugin_id: prompt-enhancer-plugin
+      version_range: "*"
+      shared_resources: [pre_llm_call hook]
+      possible_conflicts: []
+      required_tests: [tests/test_plugin_load_order_permutations.py]
+      status: compatible
+
+    - plugin_id: image_gen
+      version_range: "*"
+      shared_resources: []
+      possible_conflicts: []
+      required_tests: []
+      status: compatible
+
+    - plugin_id: spotify
+      version_range: "*"
+      shared_resources: []
+      possible_conflicts: []
+      required_tests: []
+      status: compatible
+
+    - plugin_id: disk-cleanup
+      version_range: "*"
+      shared_resources: []
+      possible_conflicts: []
+      required_tests: []
+      status: compatible
+
+  incompatible_with:
+    - plugin_id: honcho
+      version_range: "*"
+      reason: "honcho is also kind=exclusive memory; Hermes runtime rejects
+               registering a 2nd external memory provider
+               (agent/memory_manager.py:215-227)"
+      mitigation: "user picks ONE via memory.provider config key.
+                   Both plugins coexist on disk; only the selected one loads."
+
+    - plugin_id: hindsight
+      version_range: "*"
+      reason: "kind=exclusive memory — same single-external-provider rule"
+      mitigation: same as honcho
+
+    - plugin_id: mem0
+      version_range: "*"
+      reason: "kind=exclusive memory"
+      mitigation: same as honcho
+
+    - plugin_id: supermemory
+      version_range: "*"
+      reason: "kind=exclusive memory"
+      mitigation: same as honcho
+
+    - plugin_id: openviking
+      version_range: "*"
+      reason: "kind=exclusive memory"
+      mitigation: same as honcho
+
+    - plugin_id: retaindb
+      version_range: "*"
+      reason: "kind=exclusive memory"
+      mitigation: same as honcho
+
+  unknown_plugins_policy:
+    default_assumption: "untrusted but contract-valid"
+    behaviour:
+      - We never mutate kwargs passed to hooks (read-only observers).
+      - We use stable namespace prefixes for every resource we own
+        (plugin_id, tool names, env vars, storage keys, resource ids,
+        thread ids, artifact ids, async-runner thread names, logger
+        names, port number).
+      - We never monkey-patch agent core modules or other plugins.
+      - We never read another plugin's persistence directory at
+        <hermes_home>/data/<other>/.
+      - We never bind hooks for hook names outside Hermes' VALID_HOOKS
+        and rely on them firing.
+      - We never block on hot-path lifecycle hooks for more than 100 ms
+        (enforced by tests/test_non_blocking_hooks.py).
+      - When an unknown plugin loads after us, our state remains
+        untouched (verified by tests/test_plugin_non_interference.py).
+      - When an unknown plugin loads before us, our registration order
+        does not change observable behaviour (verified by
+        tests/test_plugin_load_order_permutations.py).
+      - When an unknown plugin's hook callback raises, our hooks still
+        fire (Hermes invoke_hook catches per-callback; verified by
+        tests/test_plugin_failure_isolation.py).
+      - When OUR hook callback raises, other plugins' hooks still fire
+        (verified by same test).

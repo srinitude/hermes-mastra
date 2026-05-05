@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-05-05
+
+### Added
+
+#### Plugin contract suite (113 new tests)
+
+- **`tests/test_plugin_clash.py`** (18 tests) — locks namespace ownership for every plugin-owned resource: plugin id, provider name, tool prefix (`mastra_*`), env vars (`MASTRA_*`), LibSQL store id (`hermes-mastra`), resource id format (`hermes:<profile>`), recall-cache instance scoping, async-runner thread names, logger names, and a no-monkey-patch guard.
+- **`tests/test_plugin_non_interference.py`** (8 tests) — proves coexistence with arbitrary contract-valid Hermes plugins: hook callbacks never mutate kwargs, lifecycle events propagate to other plugins, foreign storage namespaces are untouched, no command/tool collisions.
+- **`tests/test_plugin_load_order_permutations.py`** (54 parametrized cases) — proves load-order invariance across every permutation of `{mastra, observer, command, lifecycle}` registrars.
+- **`tests/test_plugin_failure_isolation.py`** (7 tests) — proves failures are contained in both directions: our hooks never propagate exceptions; foreign plugin failures don't block our callbacks.
+- **`tests/test_retrieval_relevance.py`** (8 tests) — proves prefetch returns empty when cache is empty, announces the active profile, clears stale cache on session-id mismatch, on profile flip, and on `reset=True`, and writes lineage observations on session continuation.
+- **`tests/helpers/fake_plugins.py`** — in-test fakes (`install_observer_plugin`, `install_command_plugin`, `install_failing_plugin`, `install_storage_writer`, `install_lifecycle_plugin`) emulate real Hermes plugin behaviours without shipping production-mock code.
+
+#### Analysis artifacts (`analysis/`)
+
+- `source-analysis.md` — Hermes + Mastra primitives, lifecycle diagrams, performance-sensitive paths, risks/unknowns/disconfirming evidence.
+- `local-ci.md` — canonical local CI/CD command surface (`mise run quality`).
+- `plugin-contract.md` — 17-section operational plugin contract derived from Hermes source.
+- `plugin-clash-analysis.md` — 24-resource collision matrix with per-resource owner, namespace, risk, prevention strategy, and test coverage.
+- `plugin-compatibility-matrix.yaml` — 8 compatible plugins, 6 mutually-exclusive memory peers, explicit `unknown_plugins_policy`.
+- `memory-performance-plan.md` — read/write paths, ranking, compaction, isolation, caching, instrumentation, rollout, risks, acceptance criteria.
+- `tdd-task-list.yaml` — dynamic BOOTSTRAP/RED/GREEN/REFACTOR task ledger.
+- `research/firecrawl-url-map.yaml` — relevance-classified URL inventory across 5 documentation roots (Hermes docs + Mastra docs/reference/models/guides), each mapped at `limit=5000`.
+- `research/{hermes,mastra}-docs-knowledge.yaml` — extracted findings tagged by source-classification (`primary_source_claim` / `secondary_source_claim` / `source_inference` / `implementation_inference` / `common_knowledge`).
+- `research/memory-integration-findings.md` — where Hermes and Mastra contracts agree, disagree, and how the boundary is reconciled.
+- `final-report.md` — summary, evidence, tests added, CI commands run, performance measurements, behaviour validated, files changed, risks/unknowns, counter-arguments, per-conclusion confidence, and the 30-row acceptance-criteria checklist.
+
+#### Documentation maps
+
+- `references/mastra-reference-map.json` (323 links), `references/mastra-models-map.json` (128), `references/mastra-guides-map.json` (63) — Firecrawl `/v1/map` snapshots at `limit=5000`, complementing the existing `mastra-docs-map.json` and `hermes-docs-map.json`.
+
+### Changed
+
+- `references/last-benchmark.{json,md}` — refreshed; every hot-path hook returns under 0.2 ms p99 even with 500 ms simulated HTTP latency. Background queue throughput 16,376 jobs/sec sustained; 93 % cache hit rate over a 200-turn loop.
+
+### Verified
+
+- `mise run quality` passes (format · lint · typecheck · 552 tests · security:audit · validate).
+- `mise run compat` confirms all 16 Hermes `MemoryProvider` hooks and all 8 used `@mastra/memory` APIs are present in upstream HEAD.
+- Every new test file respects the 200 LOC / 30 LOC-per-construct / depth-3 code-size policy (200/200 policy checks pass).
+- Zero changes to production Python or TypeScript source — the plugin's existing `0.1.0` implementation already met every contract; the upgrade is delivered as enforceable regression-guard tests.
+
+[0.2.0]: https://github.com/srinitude/hermes-mastra/releases/tag/v0.2.0
+
 ## [0.1.0] - 2025-05-03
 
 ### Added
@@ -59,4 +103,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **425+ tests** covering tool contracts, isolation boundaries, hook deadlines, capacity hints, artifact versioning, server routes, and the ContextEngine wrapper.
 
-[0.1.0]: https://github.com/nousresearch/hermes-mastra/releases/tag/v0.1.0
+[0.1.0]: https://github.com/srinitude/hermes-mastra/releases/tag/v0.1.0

@@ -1,0 +1,104 @@
+# Firecrawl URL inventory for the 5 documentation roots in scope.
+# Each entry preserves: source root, discovered URL, page title (when
+# available from Firecrawl /map; usually NOT available — /map returns
+# bare links), inferred section, relevance classification + reason.
+#
+# Underlying raw data lives in references/{hermes-docs-map,mastra-docs-map,
+# mastra-reference-map,mastra-models-map,mastra-guides-map,
+# mastra-docs-full-map}.json with fetched_at: 2026-05-05.
+
+sources:
+  - root: https://hermes-agent.nousresearch.com/docs/
+    raw_file: references/hermes-docs-map.json
+    discovered_count: 277
+    relevance_filter: pages mentioning plugins, memory, profiles, hooks
+  - root: https://mastra.ai/docs
+    raw_file: references/mastra-docs-map.json
+    discovered_count: 113
+    relevance_filter: pages on memory, agents, workflows, tools, storage
+  - root: https://mastra.ai/reference
+    raw_file: references/mastra-reference-map.json
+    discovered_count: 323
+    relevance_filter: API reference for Memory, Storage, Agent, Workflow
+  - root: https://mastra.ai/models
+    raw_file: references/mastra-models-map.json
+    discovered_count: 128
+    relevance_filter: provider-specific behavior relevant to Observer/Reflector
+  - root: https://mastra.ai/guides
+    raw_file: references/mastra-guides-map.json
+    discovered_count: 63
+    relevance_filter: integration guides relevant to memory orchestration
+
+critical:
+  - url: https://hermes-agent.nousresearch.com/docs/developer-guide/memory-provider-plugin
+    section: developer-guide
+    source_root: hermes-docs
+    reason: "canonical contract for MemoryProvider — defines initialize kwargs,
+             hot-path budget, hook semantics. Drives every test in this repo."
+  - url: https://hermes-agent.nousresearch.com/docs/developer-guide/plugin-system
+    section: developer-guide
+    source_root: hermes-docs
+    reason: "general plugin contract: VALID_HOOKS, register(ctx), manifest,
+             discovery order, conflict-detection rules."
+  - url: https://mastra.ai/docs/memory/overview
+    section: memory
+    source_root: mastra-docs
+    reason: "Mastra memory primitive: thread, resourceId, working memory,
+             semantic recall, observational memory."
+  - url: https://mastra.ai/reference/memory/Memory
+    section: reference/memory
+    source_root: mastra-reference
+    reason: "API surface we call directly: saveMessages, recall,
+             updateWorkingMemory, listThreads, createThread."
+  - url: https://mastra.ai/reference/memory/working-memory
+    section: reference/memory
+    source_root: mastra-reference
+    reason: "scope=resource is our profile-level continuity primitive."
+  - url: https://mastra.ai/reference/memory/observational-memory
+    section: reference/memory
+    source_root: mastra-reference
+    reason: "Observer + Reflector configuration — drives our two-model setup."
+  - url: https://mastra.ai/reference/storage/LibSQLStore
+    section: reference/storage
+    source_root: mastra-reference
+    reason: "the storage backend we use; the id namespace is hermes-mastra."
+
+high:
+  - url: https://hermes-agent.nousresearch.com/docs/developer-guide/hooks
+    reason: "exhaustive list of plugin hooks + invocation contract."
+  - url: https://hermes-agent.nousresearch.com/docs/architecture/profiles
+    reason: "profile = tenant model; resourceFor() maps onto this."
+  - url: https://hermes-agent.nousresearch.com/docs/architecture/sessions
+    reason: "session_id rotation events — drives on_session_switch."
+  - url: https://mastra.ai/reference/agents/Agent
+    reason: "we instantiate _proxyAgent for on-demand summarization."
+  - url: https://mastra.ai/reference/memory/recall
+    reason: "vector + lastMessages + observational recall semantics."
+  - url: https://mastra.ai/reference/memory/createThread
+    reason: "thread lifecycle; we ensure threads exist via ensureThread()."
+  - url: https://mastra.ai/docs/storage/overview
+    reason: "storage abstractions; informs our LibSQL choice."
+  - url: https://mastra.ai/docs/agents/agent-memory
+    reason: "agent-side memory wiring; informs our proxyAgent setup."
+  - url: https://mastra.ai/docs/agents/observability
+    reason: "tracing primitives; informs no-collision policy for spans."
+
+medium:
+  - url: https://mastra.ai/docs/integrations/openai-compatible
+    reason: "we use createOpenAICompatible({ baseURL, apiKey }) for both Observer + Reflector."
+  - url: https://mastra.ai/reference/voice  # ignored
+    reason: "voice not in scope; classification only for completeness."
+  - url: https://mastra.ai/guides/01-investigative-agent
+    reason: "patterns for observer-style agents — informs our Observer model role."
+
+low:
+  - url: https://mastra.ai/docs/playground
+    reason: "playground UI not used by this plugin."
+  - url: https://mastra.ai/docs/cli
+    reason: "the Mastra CLI is not part of this plugin's runtime path."
+
+irrelevant:
+  - pattern: "https://mastra.ai/blog/*"
+    reason: "marketing blog posts; not authoritative on API behaviour."
+  - pattern: "https://hermes-agent.nousresearch.com/docs/changelog"
+    reason: "release notes; not contractual."

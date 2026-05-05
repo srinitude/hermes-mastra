@@ -1,0 +1,118 @@
+# Hermes Agent — extracted knowledge for the Mastra memory plugin
+# Source classification per finding:
+#   primary_source_claim   = stated by Hermes source code or docs
+#   secondary_source_claim = stated by adjacent docs / readme / changelog
+#   source_inference       = derived from reading two or more source files
+#   implementation_inference = derived from runtime behavior in this repo
+#   common_knowledge       = framework conventions, no citation needed
+
+primitives:
+  - name: AIAgent
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/run_agent.py
+    summary: "central conversation loop; carries session_id, profile,
+              user_id, platform; runs synchronous tool-call loop with
+              memory hooks before/after each turn."
+
+  - name: MemoryProvider
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/agent/memory_provider.py
+    summary: "ABC base for memory providers; defines required + optional
+              hooks; documented to receive hermes_home + platform in
+              initialize kwargs ALWAYS."
+
+  - name: MemoryManager
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/agent/memory_manager.py
+    summary: "registers built-in + at most one external provider;
+              orchestrates prefetch_all/sync_all/on_pre_compress/etc.;
+              each provider call wrapped in per-provider try/except."
+
+  - name: PluginContext
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/hermes_cli/plugins.py:233-590
+    summary: "facade passed to register(ctx); exposes register_tool,
+              register_hook, register_command, register_cli_command,
+              register_context_engine, register_image_gen_provider,
+              register_platform, register_skill, dispatch_tool,
+              inject_message; memory loader extends with
+              register_memory_provider."
+
+  - name: VALID_HOOKS
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/hermes_cli/plugins.py:78-114
+    summary: "frozen set of hook names plugins may register without a
+              warning. invoke_hook fires every callback in registration
+              order; per-callback exceptions are swallowed."
+
+memory_model:
+  - finding: "Hot-path lifecycle hooks must return in < 100 ms"
+    classification: secondary_source_claim
+    citation: AGENTS.md (this repo)
+    implication: "all server-side I/O is enqueued on AsyncRunner."
+  - finding: "on_pre_compress return value is appended to compression
+              summary prompt"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:203-213
+    implication: "we feed our recall snapshot here so durable
+                  observations survive compression."
+  - finding: "on_session_switch fires for /resume, /branch, /reset,
+              /new, gateway equivalents, AND context compression"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:164-201
+    implication: "must handle reset=True (clear cached state) AND
+                  reset=False (preserve lineage)."
+
+profiles:
+  - finding: "Each Hermes profile has its own ~/.hermes/<profile>/
+              directory; hermes_constants.get_hermes_home() resolves
+              the active one"
+    classification: primary_source_claim
+    citation: ~/.hermes/hermes-agent/hermes_constants.py
+  - finding: "Plugins receive hermes_home in init kwargs"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:62-82
+  - finding: "agent_identity (preferred) or profile (fallback) carries
+              the active profile name in init kwargs"
+    classification: primary_source_claim
+    citation: this repo's tests/test_hermes_init_contract.py
+  - finding: "agent_context controls write opt-out: 'cron' and 'flush'
+              SHOULD NOT write durable state"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:74-77
+
+tenants:
+  - finding: "Hermes does not natively model multi-tenant; the
+              tenant boundary is the profile (= ~/.hermes/<profile>/)"
+    classification: source_inference
+    citation: hermes_constants.py + agent/memory_provider.py
+    implication: "this plugin treats profile == tenant; resourceId =
+                  hermes:<profile> is the only enforcement primitive."
+
+session_behavior:
+  - finding: "session_id rotates on /resume /branch /reset /new and
+              context compression"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:164-201
+  - finding: "subagents have no memory provider session
+              (skip_memory=True)"
+    classification: primary_source_claim
+    citation: agent/memory_provider.py:215-225
+
+operating_model:
+  - finding: "MemoryManager allows exactly ONE external memory provider"
+    classification: primary_source_claim
+    citation: agent/memory_manager.py:215-227
+    implication: "no test scenario can have two memory plugins running."
+  - finding: "Plugin failures are isolated: per-callback try/except in
+              invoke_hook and per-provider try/except in MemoryManager"
+    classification: primary_source_claim
+    citation: hermes_cli/plugins.py:1078-1102 +
+              agent/memory_manager.py:285-457
+
+discouraged_patterns:
+  - "Mutating kwargs passed to a plugin hook"
+  - "Monkey-patching agent core modules"
+  - "Blocking on hot-path lifecycle hooks for > 100 ms"
+  - "Reading another plugin's persistence directory"
+  - "Reusing another plugin's namespace prefix"

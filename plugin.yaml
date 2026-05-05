@@ -1,6 +1,6 @@
 manifest_version: 1
 name: mastra
-version: 0.1.0
+version: 0.2.0
 description: "Mastra Observational Memory — long-context dense observation log via background Observer/Reflector agents. Per-profile isolation via Mastra resourceId."
 author: "@srinitude"
 homepage: "https://github.com/srinitude/hermes-mastra"
