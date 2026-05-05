@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-05-05
+
+### Fixed
+
+- **Import context bug under the real Hermes loader.** `server_manager.py` and `server_process.py` used bare absolute imports (`from server_config import …`) that worked under pytest (because `conftest.py` adds the plugin root to `sys.path`) but raised `ModuleNotFoundError` under Hermes' actual loader, which loads the plugin as `plugins.memory.mastra.<module>`. The downstream effect was silent: `is_available()` swallowed the `ImportError` and returned `False`, so the plugin appeared healthy in tests yet refused to activate at runtime. Fixed by wrapping the sibling imports in the `try: from .X import …; except ImportError: from X import …` pattern already used by every other module in this codebase. Caught by manual smoke testing v0.2.0 on a clean install — see `scripts/manual-smoke.sh`.
+
+### Added
+
+- **`tests/test_hermes_loader_imports.py`** (5 tests) — RED-then-GREEN regression guard for the import-context bug. Every assertion runs in a fresh subprocess that simulates the Hermes loader (synthetic `plugins.memory.mastra` package via symlink, plugin root NOT on `sys.path`) so in-process state can never leak into the rest of the suite. Includes a smoke test that calls `plugins.memory.load_memory_provider('mastra')` through Hermes' actual venv.
+- **`scripts/manual-smoke.sh`** — one-shot 9-phase manual smoke test: pre-flight → sync → activate → server bring-up → tool surface → round-trip → tenant isolation → in-process hook roundtrip with 100 ms budget enforcement → tear-down. Distinct exit codes per phase (2=preflight, 3=server, 4=load, 5=tenant-leak, 6=budget) for CI integration.
+
+### Verified live
+
+- All 9 smoke phases pass against a freshly-installed plugin: every hot-path hook returns in **< 0.1 ms** (`system_prompt_block` 0.03 ms · `prefetch` 0.07 ms · `sync_turn` / `on_session_switch` / `on_pre_compress` / `on_memory_write` all 0.01 ms).
+- **Tenant isolation verified end-to-end on a live Bun server**: writes to `hermes:smoke-default` and `hermes:smoke-other` stayed in their own resourceIds; cross-profile keyword search returned 0 hits; working-memory values per profile remained distinct. No leakage at any boundary.
+- `mise run quality` passes (560 tests, format · lint · typecheck · security:audit · validate).
+
+[0.2.1]: https://github.com/srinitude/hermes-mastra/releases/tag/v0.2.1
+
 ## [0.2.0] - 2026-05-05
 
 ### Added

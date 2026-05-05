@@ -14,16 +14,28 @@ import signal
 import subprocess
 import time
 
-from server_config import (
-    SERVER_DIR,
-    clear_pid,
-    is_port_open,
-    load_config,
-    log_file,
-    read_pid,
-    write_pid,
-)
-from server_env import build_server_env
+try:  # package context (Hermes loader)
+    from .server_config import (
+        SERVER_DIR,
+        clear_pid,
+        is_port_open,
+        load_config,
+        log_file,
+        read_pid,
+        write_pid,
+    )
+    from .server_env import build_server_env
+except ImportError:  # pytest / direct sys.path import
+    from server_config import (  # type: ignore[no-redef]
+        SERVER_DIR,
+        clear_pid,
+        is_port_open,
+        load_config,
+        log_file,
+        read_pid,
+        write_pid,
+    )
+    from server_env import build_server_env  # type: ignore[no-redef]
 
 # ---------------------------------------------------------------------------
 # Windows compatibility guards
