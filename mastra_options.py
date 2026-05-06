@@ -29,6 +29,15 @@ import copy
 import json
 from typing import Any
 
+RESILIENCE_KNOBS: dict[str, type[int] | type[float]] = {
+    "breaker_threshold": int,
+    "breaker_cooldown_seconds": float,
+    "supervisor_max_restarts_per_minute": int,
+    "recall_cache_lru_size": int,
+    "dedup_lru_size": int,
+    "response_max_bytes": int,
+}
+
 
 def _load_raw() -> dict:
     try:

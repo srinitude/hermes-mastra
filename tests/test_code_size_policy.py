@@ -32,6 +32,12 @@ SKIP_DIRS = {
 FILE_LOC_LIMIT = 200
 CONSTRUCT_LOC_LIMIT = 30
 NESTING_LIMIT = 3
+EXPECTED_RESILIENCE_MODULES = {
+    "circuit_breaker.py",
+    "response_guard.py",
+    "supervisor.py",
+    "observation_dedup.py",
+}
 
 
 def _iter_source_files() -> list[Path]:
@@ -107,6 +113,12 @@ def _max_nesting(node: ast.AST, depth: int = 0) -> int:
 SOURCE_FILES = _iter_source_files()
 PY_FILES = [p for p in SOURCE_FILES if p.suffix == ".py"]
 TS_FILES = [p for p in SOURCE_FILES if p.suffix == ".ts"]
+
+
+def test_expected_resilience_modules_are_policy_inputs() -> None:
+    paths = {str(path.relative_to(ROOT)) for path in SOURCE_FILES}
+    missing = sorted(EXPECTED_RESILIENCE_MODULES - paths)
+    assert not missing, f"missing source policy inputs: {missing}"
 
 
 @pytest.mark.parametrize("path", SOURCE_FILES, ids=lambda p: str(p.relative_to(ROOT)))

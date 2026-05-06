@@ -138,7 +138,12 @@ run = """#!/usr/bin/env bash
 [tasks."test:ts"]
 description = "Run Bun TS tests (server-side, when present)"
 run = """#!/usr/bin/env bash
-cd $SERVER_DIR && bun test
+cd $SERVER_DIR
+if compgen -G "src/*.test.ts" >/dev/null || compgen -G "src/*.spec.ts" >/dev/null; then
+  bun test
+else
+  echo '✓ no Bun TS tests present'
+fi
 """
 
 [tasks."test:py"]
@@ -297,6 +302,18 @@ run = """#!/usr/bin/env bash
 description = "Run plugin benchmarks (hot-path latency, runner throughput, cache freshness)"
 run = """#!/usr/bin/env bash
 .venv/bin/python scripts/benchmark.py
+"""
+
+[tasks."bench:resilience"]
+description = "Run fault-injected resilience benchmark and assert hot-path p99 <100ms"
+run = """#!/usr/bin/env bash
+.venv/bin/python scripts/benchmark.py --resilience
+"""
+
+[tasks.chaos]
+description = "Run chaos fault-injection tests"
+run = """#!/usr/bin/env bash
+.venv/bin/python -m pytest -q tests/test_chaos_*.py
 """
 
 [tasks."bench:compare"]

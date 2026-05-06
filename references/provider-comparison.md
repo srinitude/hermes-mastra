@@ -1,6 +1,6 @@
 # Memory provider comparison
 
-_Generated 2026-05-02 23:52:02 from `opensrc path NousResearch/hermes-agent`._
+_Generated 2026-05-06 10:59:56 from `opensrc path NousResearch/hermes-agent`._
 
 
 ## Capability matrix

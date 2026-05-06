@@ -1,106 +1,106 @@
 {
-  "version": 1,
-  "started_at": "2026-05-05T13:55:30",
+  "version": 2,
+  "started_at": "2026-05-06T11:00:10",
   "hot_path": {
     "prefetch": {
       "fast_client": {
-        "min_ms": 0.0004,
-        "p50_ms": 0.0005,
-        "p95_ms": 0.0007,
-        "p99_ms": 0.0021,
-        "max_ms": 0.0575
+        "min_ms": 0.0013,
+        "p50_ms": 0.0014,
+        "p95_ms": 0.0016,
+        "p99_ms": 0.005,
+        "max_ms": 0.0764
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0004,
-        "p50_ms": 0.0004,
-        "p95_ms": 0.0008,
-        "p99_ms": 0.012,
-        "max_ms": 0.012
+        "min_ms": 0.0012,
+        "p50_ms": 0.0013,
+        "p95_ms": 0.0019,
+        "p99_ms": 0.0224,
+        "max_ms": 0.0224
       },
       "naive_baseline_p50_ms": 500
     },
     "sync_turn": {
       "fast_client": {
-        "min_ms": 0.0025,
-        "p50_ms": 0.0026,
-        "p95_ms": 0.0056,
-        "p99_ms": 0.0587,
-        "max_ms": 0.0664
+        "min_ms": 0.0013,
+        "p50_ms": 0.0015,
+        "p95_ms": 0.003,
+        "p99_ms": 0.0455,
+        "max_ms": 0.0478
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0052,
-        "p50_ms": 0.0055,
-        "p95_ms": 0.0141,
-        "p99_ms": 0.1617,
-        "max_ms": 0.1617
+        "min_ms": 0.0012,
+        "p50_ms": 0.0013,
+        "p95_ms": 0.0017,
+        "p99_ms": 0.0173,
+        "max_ms": 0.0173
       },
       "naive_baseline_p50_ms": 500
     },
     "on_pre_compress": {
       "fast_client": {
-        "min_ms": 0.0037,
-        "p50_ms": 0.0099,
-        "p95_ms": 0.0138,
-        "p99_ms": 0.0398,
-        "max_ms": 0.0475
+        "min_ms": 0.0021,
+        "p50_ms": 0.0051,
+        "p95_ms": 0.0055,
+        "p99_ms": 0.0245,
+        "max_ms": 0.056
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0122,
-        "p50_ms": 0.0125,
-        "p95_ms": 0.022,
-        "p99_ms": 0.0746,
-        "max_ms": 0.0746
+        "min_ms": 0.0026,
+        "p50_ms": 0.0028,
+        "p95_ms": 0.0031,
+        "p99_ms": 0.0268,
+        "max_ms": 0.0268
       },
       "naive_baseline_p50_ms": 500
     },
     "on_session_end": {
       "fast_client": {
-        "min_ms": 0.0099,
-        "p50_ms": 0.0102,
-        "p95_ms": 0.0117,
-        "p99_ms": 0.0169,
-        "max_ms": 0.0594
+        "min_ms": 0.0021,
+        "p50_ms": 0.0023,
+        "p95_ms": 0.0024,
+        "p99_ms": 0.0041,
+        "max_ms": 0.0254
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0059,
-        "p50_ms": 0.0063,
-        "p95_ms": 0.0462,
-        "p99_ms": 0.0728,
-        "max_ms": 0.0728
+        "min_ms": 0.002,
+        "p50_ms": 0.0021,
+        "p95_ms": 0.0028,
+        "p99_ms": 0.0294,
+        "max_ms": 0.0294
       },
       "naive_baseline_p50_ms": 500
     },
     "on_memory_write": {
       "fast_client": {
-        "min_ms": 0.008,
-        "p50_ms": 0.012,
-        "p95_ms": 0.013,
-        "p99_ms": 0.0446,
-        "max_ms": 0.0485
+        "min_ms": 0.0029,
+        "p50_ms": 0.003,
+        "p95_ms": 0.0033,
+        "p99_ms": 0.0344,
+        "max_ms": 0.0617
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0035,
-        "p50_ms": 0.0037,
-        "p95_ms": 0.004,
-        "p99_ms": 0.028,
-        "max_ms": 0.028
+        "min_ms": 0.0027,
+        "p50_ms": 0.0029,
+        "p95_ms": 0.0037,
+        "p99_ms": 0.0242,
+        "max_ms": 0.0242
       },
       "naive_baseline_p50_ms": 500
     },
     "on_delegation": {
       "fast_client": {
-        "min_ms": 0.0007,
-        "p50_ms": 0.0008,
-        "p95_ms": 0.002,
-        "p99_ms": 0.0131,
-        "max_ms": 0.0211
+        "min_ms": 0.0019,
+        "p50_ms": 0.0021,
+        "p95_ms": 0.0023,
+        "p99_ms": 0.0083,
+        "max_ms": 0.0275
       },
       "slow_client_500ms_http": {
-        "min_ms": 0.0053,
-        "p50_ms": 0.0056,
-        "p95_ms": 0.0094,
-        "p99_ms": 0.0385,
-        "max_ms": 0.0385
+        "min_ms": 0.002,
+        "p50_ms": 0.0021,
+        "p95_ms": 0.0025,
+        "p99_ms": 0.0158,
+        "max_ms": 0.0158
       },
       "naive_baseline_p50_ms": 500
     }
@@ -110,24 +110,35 @@
       "jobs_submitted": 5000,
       "jobs_delivered": 5000,
       "delivery_rate_pct": 100.0,
-      "wall_seconds": 0.305,
-      "throughput_jobs_per_sec": 16376
+      "wall_seconds": 0.327,
+      "throughput_jobs_per_sec": 15298
     },
     "burst_overflow": {
       "jobs_submitted": 10000,
-      "jobs_delivered": 527,
-      "delivery_rate_pct": 5.27,
-      "enqueue_total_ms": 15.07,
-      "enqueue_per_job_us": 1.51,
+      "jobs_delivered": 264,
+      "delivery_rate_pct": 2.64,
+      "enqueue_total_ms": 17.94,
+      "enqueue_per_job_us": 1.79,
       "note": "Bounded queue drops oldest when full (size=256). A delivery_rate <100% under burst is the documented overflow policy \u2014 producers stay non-blocking by dropping pending writes."
     }
   },
   "cache_freshness": {
     "turns": 200,
-    "cache_hits": 186,
-    "cache_misses": 14,
-    "hit_rate_pct": 93.0,
-    "background_recalls_completed": 14
+    "cache_hits": 187,
+    "cache_misses": 13,
+    "hit_rate_pct": 93.5,
+    "background_recalls_completed": 16
   },
-  "wall_seconds": 17.21
+  "resilience": {
+    "fault_injection": {
+      "min_ms": 0.0007,
+      "p50_ms": 0.0011,
+      "p95_ms": 0.0029,
+      "p99_ms": 0.028,
+      "max_ms": 0.0843
+    },
+    "failures": 0,
+    "budget_ms": 100
+  },
+  "wall_seconds": 32.56
 }

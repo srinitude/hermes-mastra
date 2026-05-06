@@ -22,6 +22,9 @@ try:  # package context (Hermes loader: plugins.memory.mastra.server_manager)
         log_file,
         pid_file,
         read_pid,
+        safe_log_file,
+        safe_save_config,
+        safe_write_pid,
         save_config,
         write_pid,
     )
@@ -46,6 +49,9 @@ except ImportError:  # pytest / direct sys.path import
         log_file,
         pid_file,
         read_pid,
+        safe_log_file,
+        safe_save_config,
+        safe_write_pid,
         save_config,
         write_pid,
     )

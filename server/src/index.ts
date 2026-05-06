@@ -47,4 +47,14 @@ console.log(
   }),
 );
 
-Bun.serve({ port: PORT, hostname: HOST, fetch: app.fetch });
+Bun.serve({
+  port: PORT,
+  hostname: HOST,
+  idleTimeout: 5,
+  fetch: app.fetch,
+  error: (error) =>
+    Response.json(
+      { error: "mastra server boundary", reason: String(error), timeout: true },
+      { status: 503 },
+    ),
+});

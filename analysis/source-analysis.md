@@ -241,3 +241,28 @@ session-end / /reset / context-compression
   trivially resolved by stable prefixes. The real risk is silent
   *behavioural* coupling, e.g. another plugin mutating tool args
   in-place.
+
+
+## 7. 2026-05-06 resilience/performance execution source reality
+
+### 7.1 Hermes plugin contract via opensrc
+
+`opensrc --version` reported `opensrc 0.7.2`; `opensrc path NousResearch/hermes-agent` resolved to `/Users/kiren/.opensrc/repos/github.com/NousResearch/hermes-agent/main`. The inventory matched the goal contract: `agent/memory_provider.py` is 280 lines, `agent/memory_manager.py` is 557 lines, and `hermes_cli/plugins.py` exposes `PluginContext`, `register_hook`, `_load_plugin`, and `invoke_hook`. The observed `MemoryProvider` hook surface is: `name`, `is_available`, `initialize`, `system_prompt_block`, `prefetch`, `queue_prefetch`, `sync_turn`, `get_tool_schemas`, `handle_tool_call`, `shutdown`, `on_turn_start`, `on_session_end`, `on_session_switch`, `on_pre_compress`, `on_delegation`, `get_config_schema`, `save_config`, and `on_memory_write`. No Hermes core files were edited.
+
+### 7.2 Mastra Memory and LibSQL source reality
+
+`opensrc path mastra-ai/mastra` resolved to `/Users/kiren/.opensrc/repos/github.com/mastra-ai/mastra/main`; `opensrc path tursodatabase/libsql-client-ts` resolved to `/Users/kiren/.opensrc/repos/github.com/tursodatabase/libsql-client-ts/main`. `packages/memory/src/index.ts` exports `Memory` and contains `recall`, `listThreads`, `deleteThread`, `updateWorkingMemory`, `saveMessages`, and `getWorkingMemory`; the libSQL memory and prompt-block domains exist under `stores/libsql/src/storage/domains/`. The observed package versions were `@mastra/memory` `1.15.1-alpha.0` and `@libsql/client` `0.17.3`.
+
+### 7.3 Baseline resilience surface and gaps
+
+Existing coverage includes plugin failure isolation for provider/hook callbacks (`tests/test_plugin_failure_isolation.py`) and non-blocking budgets for `is_available`, `system_prompt_block`, `prefetch`, `queue_prefetch`, `sync_turn`, `on_pre_compress`, `on_session_switch`, `on_memory_write`, `on_delegation`, `get_tool_schemas`, and `on_session_end` (`tests/test_non_blocking_hooks.py`). `async_runner.py` already uses a bounded queue with drop-oldest overflow and a `dropped` counter; `recall_cache.py` is thread-safe but pre-goal state was single-snapshot rather than per `(profile, thread)` LRU; `provider_lifecycle.py` already enqueues write-side work off the hot path and clears cache on session/profile changes.
+
+Uncovered gaps before RED: circuit breaker, server supervisor restart policy, observation deduplication, response-shape validation, profile-flip leakage under concurrent recall, filesystem failure no-op behavior, malformed/oversized responses, auth-token rotation, partial-init no-op recovery, lineage prefetch from parent session, smarter capacity hint routing, and queue-saturation burst logging.
+
+### 7.4 Bootstrap baseline evidence
+
+`mise run setup`, `mise run install`, and `.venv/bin/python -m pytest --collect-only -q` completed; collect-only reported 560 tests before new RED files. The first `mise run quality` exposed a stale active Hermes plugin directory at `~/.hermes/hermes-agent/plugins/memory/mastra` containing only `server/`; `mise run sync` restored the active plugin copy and the loader smoke then passed. The rerun `mise run quality` passed with 554 passed and 6 upstream-compat skips caused by a transient GitHub API rate-limit in opensrc fetch. `mise run bench` wrote the performance floor to `references/last-benchmark.json` with hot-path p99 under 0.05 ms under the 500 ms slow-client injection.
+
+### 7.5 Firecrawl availability note
+
+`FIRECRAWL_NO_TELEMETRY=1 firecrawl --status` exited 0 with CLI version `1.16.0` but reported `Not authenticated`, and `FIRECRAWL_API_KEY` was absent from the execution environment. Cached maps under `analysis/research/url-maps/` were present and fresh for this goal run (`mastra=204`, `hermes=317`, `bun=317`, `hono=84`, `libsql=253`, `mise=219` links). No live Firecrawl scrape or map refresh was claimed during execution; the cached artifacts remain the evidence source until credentials are supplied.

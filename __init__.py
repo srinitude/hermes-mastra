@@ -48,6 +48,9 @@ class MastraMemoryProvider(MemoryProvider):
         self._thread = ""
         self._cron_skipped = False
         self._recall_cache = RecallCache()
+        self._observation_count = 0
+        self._observation_floor = 5
+        self._last_user_message = ""
 
     @property
     def name(self) -> str:
@@ -125,27 +128,28 @@ class MastraMemoryProvider(MemoryProvider):
         return block
 
     def _capacity_hint(self) -> str:
-        """If MEMORY.md or USER.md is ≥50% full, suggest mastra_observe.
+        """Suggest the right Mastra tool for capacity or recall pressure."""
+        full = self._full_builtin_memory_labels()
+        obs_count = int(getattr(self, "_observation_count", 0) or 0)
+        floor = int(getattr(self, "_observation_floor", 5) or 5)
+        if full and obs_count < floor:
+            return (
+                f"⚠ Built-in memory near capacity: {', '.join(full)}. "
+                "Persist durable overflow with `mastra_observe`."
+            )
+        message = str(getattr(self, "_last_user_message", "") or "").casefold()
+        wants_recall = any(verb in message for verb in ("remember", "last time", "we did"))
+        if wants_recall and not self._recall_cache.get(self._profile, self._thread):
+            return "Need prior context? Use `mastra_search` for profile-wide observations."
+        return ""
 
-        Half-full is the early-warning point per the user's principle:
-        proactive triggers > reactive ones.  Waiting until 80% leaves
-        only a few turns of headroom — by then the off-load window is
-        nearly gone.
-        """
-        mem_pct = getattr(self, "_memory_usage_pct", None)
-        user_pct = getattr(self, "_user_usage_pct", None)
-        full: list[str] = []
-        if isinstance(mem_pct, (int, float)) and mem_pct >= 0.50:
-            full.append(f"MEMORY.md ({int(mem_pct * 100)}%)")
-        if isinstance(user_pct, (int, float)) and user_pct >= 0.50:
-            full.append(f"USER.md ({int(user_pct * 100)}%)")
-        if not full:
-            return ""
-        return (
-            f"⚠ Built-in memory near capacity: {', '.join(full)}. "
-            "For larger or session-specific durable facts, prefer "
-            "`mastra_observe` — Mastra has no character limit."
-        )
+    def _full_builtin_memory_labels(self) -> list[str]:
+        labels: list[str] = []
+        for attr, name in (("_memory_usage_pct", "MEMORY.md"), ("_user_usage_pct", "USER.md")):
+            pct = getattr(self, attr, None)
+            if isinstance(pct, (int, float)) and pct >= 0.50:
+                labels.append(f"{name} ({int(pct * 100)}%)")
+        return labels
 
     def prefetch(self, query: str, *, session_id: str = "") -> str:
         return L.do_prefetch(self, query, session_id=session_id)

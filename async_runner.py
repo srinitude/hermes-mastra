@@ -67,6 +67,9 @@ class AsyncRunner:
         self._lock = threading.Lock()
         self._closed = False
         self._dropped = 0
+        self._drop_bursts = 0
+        self._drop_active = False
+        self._drop_log_pending = False
         for i in range(workers):
             t = threading.Thread(
                 target=self._loop,
@@ -79,33 +82,43 @@ class AsyncRunner:
     # ----- producer side -----
 
     def submit(self, fn: Callable[[], None]) -> bool:
-        """Enqueue *fn* for background execution.
-
-        Returns ``True`` if enqueued, ``False`` if dropped (queue full or
-        runner closed). Never blocks the caller for more than the cheap
-        cost of acquiring a lock and a queue ``put_nowait``.
-        """
+        """Enqueue *fn* for background execution without blocking the producer."""
         if self._closed:
             return False
+        if self._try_put(fn):
+            return True
+        return self._drop_oldest_and_put(fn)
+
+    def _try_put(self, fn: Callable[[], None]) -> bool:
         try:
             self._queue.put_nowait(fn)
             return True
         except queue.Full:
-            # Drop the oldest pending item so we never starve newer writes,
-            # then enqueue the new one. Producer must stay non-blocking.
-            with self._lock:
-                try:
-                    self._queue.get_nowait()
-                    self._queue.task_done()
-                    self._dropped += 1
-                except queue.Empty:
-                    pass
-                try:
-                    self._queue.put_nowait(fn)
-                    return True
-                except queue.Full:  # pragma: no cover — extremely unlikely race
-                    self._dropped += 1
-                    return False
+            return False
+
+    def _drop_oldest_and_put(self, fn: Callable[[], None]) -> bool:
+        with self._lock:
+            self._drop_one_locked()
+            if self._try_put(fn):
+                return True
+            self._mark_drop_locked()
+            return False
+
+    def _drop_one_locked(self) -> None:
+        try:
+            self._queue.get_nowait()
+            self._queue.task_done()
+        except queue.Empty:
+            return
+        self._mark_drop_locked()
+
+    def _mark_drop_locked(self) -> None:
+        self._dropped += 1
+        if self._drop_active:
+            return
+        self._drop_bursts += 1
+        self._drop_active = True
+        self._drop_log_pending = True
 
     # ----- worker side -----
 
@@ -175,9 +188,21 @@ class AsyncRunner:
     def pending(self) -> int:
         return self._queue.unfinished_tasks
 
+    def _emit_drop_log(self) -> None:
+        if not self._drop_log_pending:
+            return
+        self._drop_log_pending = False
+        logger.warning("queue_saturation")
+
     @property
     def dropped(self) -> int:
+        self._emit_drop_log()
         return self._dropped
+
+    @property
+    def drop_bursts(self) -> int:
+        self._emit_drop_log()
+        return self._drop_bursts
 
 
 # ---------------------------------------------------------------------------

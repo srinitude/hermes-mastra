@@ -1,0 +1,875 @@
+{
+  "success": true,
+  "data": {
+    "links": [
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/cloud",
+        "title": "Cloud exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces, logs, metrics, scores, and feedback to Mastra platform"
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/background-task-streaming",
+        "title": "Background task streaming | Streaming | Mastra Docs",
+        "description": "Learn how to subscribe to background task lifecycle events with `BackgroundTaskManager.stream()` to monitor task status across agents, threads, and runs."
+      },
+      {
+        "url": "https://mastra.ai/docs/community/discord/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/memory-processors/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/fga",
+        "title": "Fine-Grained Authorization (FGA) | Mastra Docs",
+        "description": "Add resource-level authorization to your Mastra application with FGA providers."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/mastra-client",
+        "title": "Mastra client SDK | Server | Mastra Docs",
+        "description": "Learn how to set up and use the Mastra Client SDK"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/sentry",
+        "title": "Sentry exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Sentry for AI tracing and monitoring"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/custom-scorers",
+        "title": "Custom scorers | Evals | Mastra Docs",
+        "description": "Mastra provides a unified createScorer factory that allows you to build custom evaluation logic using either JavaScript functions or LLM-based prompt objects..."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/structured-output/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/prompts/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/workflow-runners",
+        "title": "Workflow runners | Deployment | Mastra Docs",
+        "description": "Deploy Mastra workflows to specialized workflow execution platforms"
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/sandbox",
+        "title": "Sandbox | Workspace | Mastra Docs",
+        "description": "Configure sandbox providers to give agents command execution capabilities."
+      },
+      {
+        "url": "https://mastra.ai/docs/build-with-ai/skills",
+        "title": "Skills | Build with AI | Mastra Docs",
+        "description": "Install Mastra skills to give AI coding agents specialized knowledge about Mastra."
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/overview",
+        "title": "Editor overview | Mastra Docs",
+        "description": "Let non-technical team members iterate on agents, version every change, and run experiments without redeploying."
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/graph-rag",
+        "title": "GraphRAG | RAG | Mastra Docs",
+        "description": "Guide on graph-based retrieval in Mastra's RAG systems for documents with complex relationships."
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/filesystem/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/mastra-platform/configuration/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/bridges/datadog",
+        "title": "Datadog bridge | Tracing | Observability | Mastra Docs",
+        "description": "Integrate Mastra tracing with Datadog APM and LLM Observability"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/running-in-ci/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/build-with-ai/skills/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/arthur/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/monorepo",
+        "title": "Deploy in a monorepo | Deployment | Mastra Docs",
+        "description": "Learn how to deploy Mastra applications that are part of a monorepo setup"
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/workflow-state",
+        "title": "Workflow state | Workflows | Mastra Docs",
+        "description": "Share values across workflow steps using global state that persists through the entire workflow run."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/working-memory/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/project-structure/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/message-history/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/manual-install/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/custom-api-routes",
+        "title": "Custom API routes | Server | Mastra Docs",
+        "description": "Expose additional HTTP endpoints from your Mastra server."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/langsmith",
+        "title": "LangSmith exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to LangSmith for LLM observability and evaluation"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/cloud/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/build-with-ai/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/tool-streaming",
+        "title": "Tool streaming | Streaming | Mastra Docs",
+        "description": "Learn how to use tool streaming in Mastra, including handling tool calls, tool results, and tool execution events during streaming."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/custom-adapters",
+        "title": "Custom adapters | Server | Mastra Docs",
+        "description": "Create a custom server adapter for frameworks other than Hono or Express."
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/vector-databases",
+        "title": "Storing embeddings in a vector database | RAG | Mastra Docs",
+        "description": "Guide on vector storage options in Mastra, including embedded and dedicated vector databases for similarity search."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/server-adapters",
+        "title": "Server Adapters | Server | Mastra Docs",
+        "description": "Manually configure a Mastra server using Express, Hono, Fastify, Koa, or NestJS adapters."
+      },
+      {
+        "url": "https://mastra.ai/docs/mastra-platform/overview",
+        "title": "Overview | Mastra platform | Mastra Docs",
+        "description": "The Mastra platform, with Studio and Server, is the easiest way to get your agents online and collect and share observability data."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/human-in-the-loop",
+        "title": "Human-in-the-loop (HITL) | Workflows | Mastra Docs",
+        "description": "Human-in-the-loop workflows in Mastra allow you to pause execution for manual approvals, reviews, or user input before continuing."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/default",
+        "title": "Default exporter | Tracing | Observability | Mastra Docs",
+        "description": "Store traces locally for development and debugging"
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/prompts",
+        "title": "Prompts | Editor | Mastra Docs",
+        "description": "Build reusable, versioned instruction templates with template variables and display conditions."
+      },
+      {
+        "url": "https://mastra.ai/docs/build-with-ai/mcp-docs-server",
+        "title": "Mastra docs server | Build with AI | Mastra Docs",
+        "description": "Learn how to use the Mastra MCP documentation server in your IDE to turn it into an agentic Mastra expert."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/built-in-scorers",
+        "title": "Built-in scorers | Evals | Mastra Docs",
+        "description": "Overview of Mastra's ready-to-use scorers for evaluating AI outputs across quality, safety, and performance dimensions."
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/workflow-streaming",
+        "title": "Workflow streaming | Streaming | Mastra Docs",
+        "description": "Learn how to use workflow streaming in Mastra, including handling workflow execution events, step streaming, and workflow integration with agents and tools."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/running-in-ci",
+        "title": "Running scorers in CI | Evals | Mastra Docs",
+        "description": "Learn how to run scorer experiments in your CI/CD pipeline using the runEvals function."
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/browser-viewer/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/agent-browser/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/cloud-providers/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/community/contributing-templates",
+        "title": "Contributing templates | Community | Mastra Docs",
+        "description": "How to contribute your own templates to the Mastra ecosystem"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/okta",
+        "title": "Okta | Auth | Mastra Docs",
+        "description": "Authenticate your Mastra server and Studio using Okta with SSO login and group-based RBAC."
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/workflow-runners/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/braintrust",
+        "title": "Braintrust exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Braintrust for evaluation and monitoring"
+      },
+      {
+        "url": "https://mastra.ai/docs/voice/speech-to-text",
+        "title": "Speech-to-Text (STT) | Voice | Mastra Docs",
+        "description": "Overview of Speech-to-Text capabilities in Mastra, including configuration, usage, and integration with voice providers."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/custom-scorers/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/events",
+        "title": "Streaming events | Streaming | Mastra Docs",
+        "description": "Learn about the different types of streaming events in Mastra, including text deltas, tool calls, step events, and how to handle them in your applications."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/overview",
+        "title": "Scorers overview | Evals | Mastra Docs",
+        "description": "Overview of scorers in Mastra, detailing their capabilities for evaluating AI outputs and measuring performance."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/background-tasks",
+        "title": "Background tasks | Agents | Mastra Docs",
+        "description": "Learn how to dispatch long-running tool calls in the background, keep the stream open until they complete, and orchestrate subagents asynchronously."
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/stagehand",
+        "title": "Stagehand | Browser | Mastra Docs",
+        "description": "Use the Stagehand provider for AI-powered browser automation with natural language selectors."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/logging",
+        "title": "Logging | Observability | Mastra Docs",
+        "description": "Learn how to use logging in Mastra to monitor execution, capture application behavior, and improve the accuracy of AI applications."
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/search",
+        "title": "Search and indexing | Workspace | Mastra Docs",
+        "description": "Index workspace content for BM25 keyword search, vector semantic search, or hybrid mode."
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/mastra-server/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/supervisor-agents",
+        "title": "Supervisor agents | Agents | Mastra Docs",
+        "description": "Learn how to coordinate multiple agents with delegation hooks, iteration monitoring, message filtering, and task completion scoring."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/semantic-recall/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/channels/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/retrieval",
+        "title": "Retrieval, semantic search, reranking | RAG | Mastra Docs",
+        "description": "Guide on retrieval processes in Mastra's RAG systems, including semantic search, filtering, and re-ranking."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/suspend-and-resume/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/networks",
+        "title": "Agent networks | Agents | Mastra Docs",
+        "description": "Coordinate multiple agents, workflows, and tools using agent networks for complex, non-deterministic task execution."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/adding-voice",
+        "title": "Voice | Agents | Mastra Docs",
+        "description": "Learn how to add voice capabilities to your Mastra agents for text-to-speech and speech-to-text interactions."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/suspend-and-resume",
+        "title": "Suspend & resume | Workflows | Mastra Docs",
+        "description": "Suspend and resume in Mastra workflows allows you to pause execution while waiting for external input or resources."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/agents-and-tools",
+        "title": "Agents and tools | Workflows | Mastra Docs",
+        "description": "Learn how to call agents and tools from workflow steps and choose between execute functions and step composition."
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/metrics/overview",
+        "title": "Metrics overview | Observability | Mastra Docs",
+        "description": "Understand the automatic metrics Mastra emits from traced execution."
+      },
+      {
+        "url": "https://mastra.ai/docs/mcp/mcp-apps",
+        "title": "MCP Apps | MCP | Mastra Docs",
+        "description": "Serve interactive HTML UIs from MCP tools using the MCP Apps extension."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/time-travel",
+        "title": "Time travel | Workflows | Mastra Docs",
+        "description": "Re-execute workflow steps from a specific point using time travel debugging in Mastra"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/simple-auth",
+        "title": "Simple Auth | Auth | Mastra Docs",
+        "description": "Documentation for the SimpleAuth class, which provides token-to-user mapping authentication for development and basic API key scenarios."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/channels",
+        "title": "Channels | Agents | Mastra Docs",
+        "description": "Learn how to connect your Mastra agents to messaging platforms like Slack, Discord, and Telegram using the Chat SDK."
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/message-history",
+        "title": "Message history | Memory | Mastra Docs",
+        "description": "Learn how to configure message history in Mastra to store recent messages from the current conversation."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/overview.md"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/workos",
+        "title": "WorkOS | Auth | Mastra Docs",
+        "description": "Documentation for the `@mastra/auth-workos` package, which authenticates Mastra applications using WorkOS authentication."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/laminar/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/build-with-ai/mcp-docs-server/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/better-auth",
+        "title": "Better Auth | Auth | Mastra Docs",
+        "description": "Authenticate your Mastra server using Better Auth (self-hosted, open-source auth)."
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/web-framework/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/mastra-server",
+        "title": "Server overview | Server | Mastra Docs",
+        "description": "Overview of the Mastra server, covering HTTP endpoints, middleware, authentication, and client integration."
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/manual-install",
+        "title": "Manual install | Getting Started | Mastra Docs",
+        "description": "Set up a Mastra project manually without using the create mastra CLI."
+      },
+      {
+        "url": "https://mastra.ai/docs/mastra-platform/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/voice/overview",
+        "title": "Voice in Mastra | Voice | Mastra Docs",
+        "description": "Overview of voice capabilities in Mastra, including text-to-speech, speech-to-text, and real-time speech-to-speech interactions."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/human-in-the-loop/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs",
+        "title": "Get started with Mastra | Mastra Docs",
+        "description": "Create your first Mastra application in seconds. Build AI agents, workflows, and tools with TypeScript."
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/skills",
+        "title": "Skills | Workspace | Mastra Docs",
+        "description": "Teach agents reusable capabilities with the Agent Skills specification."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/clerk",
+        "title": "Clerk | Auth | Mastra Docs",
+        "description": "Documentation for the `@mastra/auth-clerk` package, which authenticates Mastra applications using Clerk authentication."
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/overview",
+        "title": "Deployment overview | Deployment | Mastra Docs",
+        "description": "Learn about different deployment options for your Mastra applications"
+      },
+      {
+        "url": "https://mastra.ai/docs/sitemap.xml"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/processors/sensitive-data-filter",
+        "title": "Sensitive data filter | Processors | Observability | Mast...",
+        "description": "Protect sensitive information in your traces with automatic data redaction"
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/scheduled-workflows",
+        "title": "Scheduled workflows | Workflows | Mastra Docs",
+        "description": "Run a workflow on a cron schedule by declaring a `schedule` field on the workflow definition."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/supabase",
+        "title": "Supabase | Auth | Mastra Docs",
+        "description": "Documentation for the `@mastra/auth-supabase` package, which authenticates Mastra applications using Supabase Auth."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/studio/deployment",
+        "title": "Deployment | Studio | Mastra Docs",
+        "description": "Learn how to deploy Studio on your own infrastructure or on Mastra platform"
+      },
+      {
+        "url": "https://mastra.ai/docs/mcp/mcp-apps/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/studio/observability",
+        "title": "Observability | Studio | Mastra Docs",
+        "description": "Use the metrics dashboard, traces view, and logs browser in Studio to monitor agent, workflow, and tool performance."
+      },
+      {
+        "url": "https://mastra.ai/docs/mcp/overview",
+        "title": "MCP overview | MCP | Mastra Docs",
+        "description": "Learn about the Model Context Protocol (MCP), how to use third-party tools via MCPClient, connect to registries, and share your own tools using MCPServer."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/guardrails",
+        "title": "Guardrails | Agents | Mastra Docs",
+        "description": "Built-in security and safety processors for content moderation, prompt injection prevention, PII redaction, and more."
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/overview",
+        "title": "RAG (Retrieval-Augmented Generation) in Mastra | RAG | Ma...",
+        "description": "Overview of Retrieval-Augmented Generation (RAG) in Mastra, detailing its capabilities for enhancing LLM outputs with relevant context."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/memory-processors",
+        "title": "Memory processors | Memory | Mastra Docs",
+        "description": "Learn how to use memory processors in Mastra to filter, trim, and transform messages before they're sent to the language model to manage context window limits."
+      },
+      {
+        "url": "https://mastra.ai/docs/streaming/overview",
+        "title": "Streaming overview | Streaming | Mastra Docs",
+        "description": "Streaming in Mastra enables real-time, incremental responses from both agents and workflows, providing immediate feedback as AI-generated content is produced."
+      },
+      {
+        "url": "https://mastra.ai/docs/voice/speech-to-speech",
+        "title": "Speech-to-Speech capabilities in Mastra | Voice | Mastra ...",
+        "description": "Overview of speech-to-speech capabilities in Mastra, including real-time interactions and event-driven architecture."
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/project-structure",
+        "title": "Project structure | Getting Started | Mastra Docs",
+        "description": "Guide on organizing folders and files in Mastra, including best practices and recommended structures."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/agents-and-tools/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/stagehand/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/metrics/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/request-context",
+        "title": "Request context | Server | Mastra Docs",
+        "description": "Learn how to use Mastra's RequestContext to provide dynamic, request-specific configuration to agents."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/braintrust/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/overview",
+        "title": "Observability overview | Mastra Docs",
+        "description": "Understand how Mastra's tracing, metrics, and logging work together to help you monitor, debug, and optimize AI applications."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/semantic-recall",
+        "title": "Semantic recall | Memory | Mastra Docs",
+        "description": "Learn how to use semantic recall in Mastra to retrieve relevant messages from past conversations using vector search and embeddings."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/snapshots",
+        "title": "Snapshots | Workflows | Mastra Docs",
+        "description": "Learn how to save and resume workflow execution state with snapshots in Mastra"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/processors",
+        "title": "Processors | Agents | Mastra Docs",
+        "description": "Learn how to use input and output processors to transform, validate, and control messages in Mastra agents."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/datadog/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/processors/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/supervisor-agents/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/overview",
+        "title": "Overview | Workspace | Mastra Docs",
+        "description": "Give agents filesystem access and code execution through workspaces."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/bridges/otel/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/posthog",
+        "title": "PostHog exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to PostHog for AI observability and analytics"
+      },
+      {
+        "url": "https://mastra.ai/docs/getting-started/build-with-ai",
+        "title": "Build with AI | Getting Started | Mastra Docs",
+        "description": "Resources to help AI agents understand and work with Mastra."
+      },
+      {
+        "url": "https://mastra.ai/docs/community/licensing",
+        "title": "License | Community | Mastra Docs",
+        "description": "Mastra License"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/using-tools",
+        "title": "Tools | Agents | Mastra Docs",
+        "description": "Learn how to create tools and add them to agents to extend capabilities beyond text generation."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/background-tasks/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/adding-voice/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/otel",
+        "title": "OpenTelemetry exporter | Tracing | Observability | Mastra...",
+        "description": "Send traces to any OpenTelemetry-compatible observability platform"
+      },
+      {
+        "url": "https://mastra.ai/docs/voice/text-to-speech",
+        "title": "Text-to-Speech (TTS) | Voice | Mastra Docs",
+        "description": "Overview of Text-to-Speech capabilities in Mastra, including configuration, usage, and integration with voice providers."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/firebase",
+        "title": "Firebase | Auth | Mastra Docs",
+        "description": "Documentation for the `@mastra/auth-firebase` package, which authenticates Mastra applications using Firebase Authentication."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/arize",
+        "title": "Arize exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Arize Phoenix or Arize AX using OpenTelemetry and OpenInference"
+      },
+      {
+        "url": "https://mastra.ai/docs/mcp/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/custom-auth-provider",
+        "title": "Custom auth provider | Auth | Mastra Docs",
+        "description": "Create custom authentication providers for specialized identity systems"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/using-tools/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth",
+        "title": "Auth overview | Auth | Mastra Docs",
+        "description": "Learn about different auth options for securing your Mastra API and Studio."
+      },
+      {
+        "url": "https://mastra.ai/docs/studio/overview",
+        "title": "Studio | Mastra Docs",
+        "description": "Learn how to use Studio to build, test, and manage your agents, workflows, and tools."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/langfuse",
+        "title": "Langfuse exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Langfuse for LLM observability and analytics"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/arize/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/datadog",
+        "title": "Datadog exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Datadog for LLM observability and analytics"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/cloud-providers",
+        "title": "Deploy to cloud providers | Deployment | Mastra Docs",
+        "description": "Deploy your Mastra applications to cloud providers"
+      },
+      {
+        "url": "https://mastra.ai/docs/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/default/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/observational-memory",
+        "title": "Observational Memory | Memory | Mastra Docs",
+        "description": "Learn how Observational Memory keeps your agent's context window small while preserving long-term memory across conversations."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/datasets/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/networks/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/browser-viewer",
+        "title": "BrowserViewer | Browser | Mastra Docs",
+        "description": "Use BrowserViewer for CLI-based browser automation with automatic CDP injection and Studio screencast."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/agent-approval",
+        "title": "Agent approval | Agents | Mastra Docs",
+        "description": "Learn how to require approvals, suspend tool execution, and automatically resume suspended tools while keeping humans in control of agent workflows."
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/filesystem",
+        "title": "Filesystem | Workspace | Mastra Docs",
+        "description": "Configure filesystem providers to give agents persistent file storage."
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/datasets/running-experiments/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/bridges/otel",
+        "title": "OpenTelemetry bridge | Tracing | Observability | Mastra Docs",
+        "description": "Integrate Mastra tracing with existing OpenTelemetry infrastructure"
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/overview",
+        "title": "Memory overview | Memory | Mastra Docs",
+        "description": "Learn how Mastra's memory system works with working memory, message history, semantic recall, and observational memory."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/control-flow",
+        "title": "Control flow | Workflows | Mastra Docs",
+        "description": "Control flow in Mastra workflows allows you to manage branching, merging, and conditions to construct workflows that meet your logic requirements."
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/tools/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/sandbox/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/guardrails/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/using-tools.md"
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/control-flow/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/arthur",
+        "title": "Arthur exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Arthur AI using OpenTelemetry and OpenInference semantic conventions"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/datasets/overview",
+        "title": "Datasets overview | Datasets | Mastra Docs",
+        "description": "Manage versioned test data, run experiments against agents and workflows, and track results over time."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/composite-auth",
+        "title": "Composite Auth | Auth | Mastra Docs",
+        "description": "Documentation for the CompositeAuth class, which combines multiple authentication providers into a single auth handler."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/storage",
+        "title": "Storage | Memory | Mastra Docs",
+        "description": "Configure storage for Mastra to persist conversations and other runtime state."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/jwt",
+        "title": "JSON Web Token | Auth | Mastra Docs",
+        "description": "Documentation for JSON Web Token usage inside Mastra."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/laminar",
+        "title": "Laminar exporter | Tracing | Observability | Mastra Docs",
+        "description": "Send traces to Laminar for LLM observability, evaluation, and analysis"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/monorepo/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/vector-databases/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/overview",
+        "title": "Agents overview | Mastra Docs",
+        "description": "Overview of agents in Mastra, detailing their capabilities and how they interact with tools, workflows, and external systems."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/error-handling",
+        "title": "Error handling | Workflows | Mastra Docs",
+        "description": "Learn how to handle errors in Mastra workflows using step retries, conditional branching, and monitoring."
+      },
+      {
+        "url": "https://mastra.ai/docs/studio/auth",
+        "title": "Auth | Studio | Mastra Docs",
+        "description": "Secure your Studio deployment with login screens, role-based access control, and permission-based UI rendering."
+      },
+      {
+        "url": "https://mastra.ai/docs/community/licensing/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/server/middleware",
+        "title": "Middleware | Server | Mastra Docs",
+        "description": "Apply custom middleware functions to intercept requests."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/overview",
+        "title": "Tracing | Observability | Mastra Docs",
+        "description": "Set up Tracing for Mastra applications"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/exporters/otel/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/overview/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/rag/chunking-and-embedding",
+        "title": "Chunking and embedding documents | RAG | Mastra Docs",
+        "description": "Guide on chunking and embedding documents in Mastra for efficient processing and retrieval."
+      },
+      {
+        "url": "https://mastra.ai/docs/server/auth/auth0",
+        "title": "Auth0 | Auth | Mastra Docs",
+        "description": "Documentation for the @mastra/auth-auth0 package, which authenticates Mastra applications using Auth0 authentication."
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/overview",
+        "title": "Browser overview | Mastra Docs",
+        "description": "Give agents browser control through SDK providers, CLI tools, or cloud browser services."
+      },
+      {
+        "url": "https://mastra.ai/docs/workflows/overview",
+        "title": "Workflows overview | Mastra Docs",
+        "description": "Workflows in Mastra help you orchestrate complex sequences of tasks with features like branching, parallel execution, resource suspension, and more."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/storage/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/browser/agent-browser",
+        "title": "AgentBrowser | Browser | Mastra Docs",
+        "description": "Use the AgentBrowser provider for Playwright-based web automation with accessibility-first element targeting."
+      },
+      {
+        "url": "https://mastra.ai/docs/workspace/lsp",
+        "title": "LSP inspection | Workspace | Mastra Docs",
+        "description": "Configure Language Server Protocol support for semantic code inspection in workspace files."
+      },
+      {
+        "url": "https://mastra.ai/docs/community/discord",
+        "title": "Discord community | Community | Mastra Docs",
+        "description": "Information about the Mastra Discord community and MCP bot."
+      },
+      {
+        "url": "https://mastra.ai/docs/editor/tools",
+        "title": "Tools | Editor | Mastra Docs",
+        "description": "Add and manage tools from code, integration providers, and MCP servers through the editor."
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/tracing/bridges/datadog/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/working-memory",
+        "title": "Working memory | Memory | Mastra Docs",
+        "description": "Learn how to configure working memory in Mastra to store persistent user data, preferences."
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/mastra-server",
+        "title": "Deploy a Mastra server | Deployment | Mastra Docs",
+        "description": "Learn how to build and deploy a Mastra server."
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/agent-approval/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/deployment/web-framework",
+        "title": "Deploy with a web framework | Deployment | Mastra Docs",
+        "description": "Learn how Mastra can be deployed when integrated with a Web Framework"
+      },
+      {
+        "url": "https://mastra.ai/docs/agents/structured-output",
+        "title": "Structured output | Agents | Mastra Docs",
+        "description": "Learn how to generate structured data from agents using schemas and validation."
+      },
+      {
+        "url": "https://mastra.ai/docs/memory/observational-memory/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/observability/logging/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/built-in-scorers/llms.txt"
+      },
+      {
+        "url": "https://mastra.ai/docs/evals/datasets/running-experiments",
+        "title": "Running experiments | Datasets | Mastra Docs",
+        "description": "Run experiments against agents or workflows, with scoring and result tracking."
+      },
+      {
+        "url": "https://mastra.ai/docs/mastra-platform/configuration",
+        "title": "Configuration | Mastra platform | Mastra Docs",
+        "description": "Configuration options and settings for the Mastra platform, including Studio and Server deployments."
+      },
+      {
+        "url": "https://mastra.ai/docs/v0/observability/overview",
+        "title": "Observability Overview | Observability | Mastra Docs v0.x",
+        "description": "Mastra v0.x: Monitor and debug applications with Mastra's Observability features."
+      },
+      {
+        "url": "https://mastra.ai/docs/v0/memory/overview",
+        "title": "Memory overview | Memory | Mastra Docs v0.x",
+        "description": "Mastra v0.x: Learn how Mastra's memory system works with working memory, conversation history, and semantic recall."
+      },
+      {
+        "url": "https://mastra.ai/docs/v0/workflows/error-handling",
+        "title": "Error Handling | Workflows | Mastra Docs v0.x",
+        "description": "return bail({ result: 'bailed' }); }, inputSchema: z.object({ value: z.string() }), outputSchema: z.object({ result: z.string() }), }); export const ..."
+      },
+      {
+        "url": "https://mastra.ai/docs/mcp/publishing-mcp-server",
+        "title": "Publishing an MCP server | MCP | Mastra Docs",
+        "description": "Publishing an MCP server. This example guides you through setting up a basic Mastra MCPServer using the stdio transport, building it, and preparing it for ..."
+      },
+      {
+        "url": "https://mastra.ai/docs/v0/deployment/web-framework",
+        "title": "Web Framework Integration | Deployment | Mastra Docs v0.x",
+        "description": "This guide covers deploying integrated Mastra applications. Mastra can be integrated with a variety of web frameworks, see one of the following for a detailed ..."
+      }
+    ]
+  }
+}

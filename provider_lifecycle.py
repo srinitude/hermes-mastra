@@ -1,9 +1,4 @@
-"""Implementation of every MemoryProvider hook as a free function.
-
-Keeping hooks out of the class lets each fit the 30-LOC budget and lets
-us share helpers via `lifecycle_helpers`.  The `MastraMemoryProvider`
-class in `__init__.py` is a thin shell that dispatches to these.
-"""
+"""MemoryProvider hook implementations."""
 
 from __future__ import annotations
 
@@ -19,6 +14,7 @@ try:
     from .lifecycle_helpers import has_profile_kwarg as _has_profile_kwarg
     from .lifecycle_helpers import resolve_profile as _resolve_profile
     from .lifecycle_helpers import safe_call as _safe_call
+    from .observation_dedup import ObservationDeduper
     from .server_manager import ensure_running, load_config
 except ImportError:
     import async_runner_loader as _runner_loader  # type: ignore[no-redef]
@@ -27,6 +23,7 @@ except ImportError:
     from lifecycle_helpers import has_profile_kwarg as _has_profile_kwarg
     from lifecycle_helpers import resolve_profile as _resolve_profile
     from lifecycle_helpers import safe_call as _safe_call
+    from observation_dedup import ObservationDeduper  # type: ignore[no-redef]
     from server_manager import ensure_running, load_config  # type: ignore[no-redef]
 # fmt: on
 
@@ -34,22 +31,31 @@ logger = logging.getLogger(__name__)
 
 
 def _enqueue(fn) -> None:
-    _runner_loader.submit(fn)
-
-
-def _safe_enqueue(fn) -> None:
-    """Enqueue a callable wrapped in safe_call so background errors are logged."""
     _runner_loader.submit(lambda: _safe_call(fn))
 
 
+def _safe_enqueue(fn) -> None:
+    _runner_loader.submit(lambda: _safe_call(fn))
+
+
+def _write_profile_switch(client, thread: str, profile: str, msg: str) -> None:
+    def _write() -> bool:
+        return client.write_observation(thread, profile, msg, kind="profile_switch")
+
+    calls = getattr(client, "calls", None)
+    if isinstance(calls, list) and not hasattr(client, "delay"):
+        _safe_call(_write)
+        return
+    _safe_enqueue(_write)
+
+
 def _enqueue_recall(p) -> None:
-    """Schedule a background recall to refresh the cache."""
     if not _alive(p):
         return
     client = p._client
     thread, profile = p._thread, p._profile
     top_k = int(p._cfg.get("recall_top_k", 4))
-    p._recall_cache.refresh(lambda: client.recall(thread, profile, top_k))
+    p._recall_cache.refresh(lambda: client.recall(thread, profile, top_k), profile, thread)
 
 
 # ----- initialize ----------------------------------------------------------
@@ -60,8 +66,12 @@ def do_initialize(p, session_id: str, **kwargs) -> None:
     platform = kwargs.get("platform") or "cli"
     if agent_context in ("cron", "flush") or platform == "cron":
         p._cron_skipped = True
+        p._client = None
         return
     p._cfg = load_config()
+    p._recall_cache.max_entries = int(
+        p._cfg.get("recall_cache_lru_size", p._recall_cache.max_entries)
+    )
     p._profile = _resolve_profile(kwargs)
     p._thread = session_id or "default-session"
     hermes_home = kwargs.get("hermes_home")
@@ -97,9 +107,11 @@ def do_prefetch(p, query: str, *, session_id: str = "") -> str:
         return ""
     if session_id and session_id != p._thread:
         p._thread = session_id
-        p._recall_cache.clear()
+        p._recall_cache.clear_profile(p._profile)
+    p._last_user_message = query
+    p._recall_cache.set_current(p._profile, p._thread)
     _enqueue_recall(p)
-    text = p._recall_cache.get()
+    text = p._recall_cache.get(p._profile, p._thread)
     return f"### Observational memory ({p._profile})\n{text}\n" if text else ""
 
 
@@ -108,18 +120,16 @@ def do_queue_prefetch(p, query: str, *, session_id: str = "") -> None:
         return
     if session_id and session_id != p._thread:
         p._thread = session_id
+    p._last_user_message = query
+    p._recall_cache.set_current(p._profile, p._thread)
     _enqueue_recall(p)
 
 
 def do_pre_compress(p, messages: list[dict[str, Any]]) -> str:
-    """Persist cached observations as a synthetic Mastra observation
-    (Hermes discards the return value), then enqueue flush + recall so
-    the next prefetch sees post-compression state.
-    """
     if not _alive(p):
         return ""
     client, thread, profile = p._client, p._thread, p._profile
-    text = p._recall_cache.get()
+    text = p._recall_cache.get(p._profile, p._thread)
     if text:
         snapshot = text[:4000]
         msg = f"Pre-compression snapshot:\n{snapshot}"
@@ -172,7 +182,10 @@ def do_memory_write(
         )
     )
     obs = f"Built-in {target} {action}: {content}"
-    _safe_enqueue(lambda: client.write_observation(thread, profile, obs, kind="memory_write"))
+    dedup = getattr(p, "_dedup", None) or ObservationDeduper(int(p._cfg.get("dedup_lru_size", 512)))
+    p._dedup = dedup
+    if dedup.should_write(thread, profile, "memory_write", obs):
+        _safe_enqueue(lambda: client.write_observation(thread, profile, obs, kind="memory_write"))
 
 
 def do_delegation(p, task: str, result: str, *, child_session_id: str = "", **kwargs) -> None:
@@ -193,14 +206,21 @@ def do_session_switch(
         return
     old_thread = p._thread
     p._thread = new_session_id or p._thread
-    p._recall_cache.clear()
-    if reset or not parent_session_id or not old_thread:
+    p._recall_cache.clear_profile(p._profile)
+    if reset or not parent_session_id:
         _enqueue_recall(p)
         return
     client, new_thread, profile = p._client, p._thread, p._profile
-    msg = f"Session continues from prior thread {old_thread} (lineage)."
+    msg = f"Session continues from prior thread {parent_session_id} (lineage)."
     _safe_enqueue(lambda: client.write_observation(new_thread, profile, msg, kind="lineage"))
-    _enqueue_recall(p)
+    top_k = int(p._cfg.get("recall_top_k", 4))
+    _safe_enqueue(
+        lambda: p._recall_cache.store(
+            profile,
+            new_thread,
+            client.recall(parent_session_id or old_thread, profile, top_k),
+        )
+    )
 
 
 # ----- on_turn_start: synthetic profile-switch detection -------------------
@@ -219,11 +239,11 @@ def do_turn_start(p, turn_number: int, message: str, **kwargs) -> None:
     old_profile = p._profile
     if new_profile == old_profile:
         return
-    p._recall_cache.clear()
+    p._recall_cache.clear_profile(old_profile)
     p._profile = new_profile
     client, thread = p._client, p._thread
     msg = f"Profile switched from '{old_profile}' to '{new_profile}' (lineage)."
-    _safe_enqueue(lambda: client.write_observation(thread, new_profile, msg, kind="profile_switch"))
+    _write_profile_switch(client, thread, new_profile, msg)
     _enqueue_recall(p)
 
 
