@@ -22,6 +22,7 @@ try:  # package context (Hermes loader)
         load_config,
         log_file,
         read_pid,
+        safe_log_file,
         write_pid,
     )
     from .server_env import build_server_env
@@ -33,6 +34,7 @@ except ImportError:  # pytest / direct sys.path import
         load_config,
         log_file,
         read_pid,
+        safe_log_file,
         write_pid,
     )
     from server_env import build_server_env  # type: ignore[no-redef]
@@ -132,7 +134,9 @@ def start_server(wait_seconds: float = 6.0) -> tuple[bool, str]:
         ok, msg = install_dependencies()
         if not ok:
             return False, f"install failed: {msg}"
-    log_path = log_file()
+    log_path = safe_log_file(log_file())
+    if log_path is None:
+        return False, "log file unavailable"
     proc, err = _spawn_bun(cfg, log_path)
     if proc is None:
         return False, err or "spawn failed"

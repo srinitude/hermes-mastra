@@ -24,7 +24,24 @@
 The current architecture already meets the perceived-speed goal:
 hot-path hooks return in microseconds because work is enqueued, and
 the recall snapshot served synchronously is the last successful
-fetch. The improvements we add target *non-interference*, *load-order
+fetch. The resilience upgrade adds four boundaries around that path:
+
+* `CircuitBreaker` around `MastraClient` HTTP calls; repeated upstream
+  failures open the breaker, return cached/no-op values, then half-open
+  after cooldown.
+* `response_guard` validates payload byte length, JSON decoding, and
+  expected response shape before the client consumes server data.
+* `RecallCache` is keyed by `(profile, thread)` and bounded by LRU, so a
+  profile flip cannot read another profile's cached observation text.
+* `ObservationDeduper` suppresses duplicate manual/mirrored observation
+  writes using `(thread, profile, kind, normalized_text)`.
+
+The smartness layer now prefers `mastra_observe` only when MEMORY.md /
+USER.md are >=50 % full and the profile has fewer than the actionable
+observation floor; explicit recall phrases (`remember`, `last time`,
+`we did`) with an empty cache recommend `mastra_search` instead.
+
+The improvements target *non-interference*, *load-order
 invariance*, *failure isolation*, and *retrieval relevance under the
 plugin contract*, not raw read latency (which is dominated by Mastra
 recall ≪ 100 ms in benchmark runs).
@@ -122,11 +139,13 @@ context compression. Behaviour in `do_pre_compress`:
 
 ## 10. Caching strategy
 
-* `RecallCache` — in-process, thread-safe, last-known snapshot.
+* `RecallCache` — in-process, thread-safe, bounded LRU keyed by
+  `(profile, thread)`; legacy single-snapshot access remains only for
+  back-compat tests and is cleared on every switch/reset boundary.
 * `_in_flight` flag coalesces concurrent refreshes into one HTTP
   round-trip.
-* Cache is cleared on profile switch, `/reset`, or `on_session_switch`
-  with `reset=True`.
+* Cache is cleared on profile switch, `/reset`, or any `on_session_switch`
+  before lineage prefetch warms the new thread with parent observations.
 
 ## 11. Invalidation strategy
 
@@ -141,8 +160,14 @@ context compression. Behaviour in `do_pre_compress`:
 
 * `tests/test_non_blocking_hooks.py` — every hot-path hook returns
   in < 100 ms even under simulated 1 s server latency.
+* Resilience RED tests cover circuit breaking, malformed responses,
+  filesystem failures, auth rotation, cron context, partial init,
+  lineage prefetch, queue saturation, and profile-flip safety.
 * `scripts/benchmark.py` — measures hot-path latency, runner
-  throughput, cache freshness; output → `references/last-benchmark.md`.
+  throughput, cache freshness, and `--resilience` fault-injection p99;
+  output → `references/last-benchmark.md`.
+* `mise run bench:resilience` asserts fault-injected hot-path p99 <
+  100 ms; latest run: 0.03 ms p99, 0 escaped hook failures.
 * `scripts/compare_providers.py` — measures the same against 8 other
   shipped memory provider plugins; output →
   `references/provider-comparison.md`.
@@ -160,9 +185,11 @@ context compression. Behaviour in `do_pre_compress`:
 * Bun process unavailability on first run — mitigated by best-effort
   background bring-up; provider transparently no-ops when `_alive(p)`
   is false. Verified in `provider_lifecycle._alive`.
+* Repeated upstream/server failures — mitigated by the client circuit
+  breaker and response guard, which fail closed to cached/no-op values.
 * Cross-profile leakage if `do_initialize` is skipped — mitigated by
   `_alive(p)` check that requires `_client` and `_thread` and
-  `_profile` to be set.
+  `_profile` to be set, plus `(profile, thread)` recall-cache keys.
 * Latency spikes under high write load — bounded by `async_runner`
   queue size (256) and *drop-oldest* policy, so the producer never
   stalls.

@@ -34,9 +34,7 @@ def pid_file() -> Path:
 
 
 def log_file() -> Path:
-    log_dir = _hermes_home() / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    return log_dir / "mastra.log"
+    return _hermes_home() / "logs" / "mastra.log"
 
 
 def _builtin_defaults() -> dict:
@@ -65,6 +63,12 @@ def _builtin_defaults() -> dict:
         "temporal_markers": True,
         "share_token_budget": False,
         "auth_token_env": "MASTRA_API_KEY",
+        "breaker_threshold": 5,
+        "breaker_cooldown_seconds": 5.0,
+        "supervisor_max_restarts_per_minute": 3,
+        "recall_cache_lru_size": 32,
+        "dedup_lru_size": 512,
+        "response_max_bytes": 1_000_000,
     }
 
 
@@ -80,20 +84,43 @@ def load_config() -> dict:
             logger.warning("mastra: failed to parse %s: %s", p, exc)
     if os.environ.get("MASTRA_URL"):
         cfg["server_url"] = os.environ["MASTRA_URL"]
+    return _validate_config(cfg)
+
+
+def _validate_config(cfg: dict) -> dict:
+    int_keys = (
+        "server_port",
+        "recall_top_k",
+        "breaker_threshold",
+        "supervisor_max_restarts_per_minute",
+        "recall_cache_lru_size",
+        "dedup_lru_size",
+        "response_max_bytes",
+    )
+    for key in int_keys:
+        cfg[key] = max(1, int(cfg[key]))
+    cfg["breaker_cooldown_seconds"] = max(0.0, float(cfg["breaker_cooldown_seconds"]))
     return cfg
 
 
 def save_config(values: dict) -> None:
     p = config_path()
-    p.parent.mkdir(parents=True, exist_ok=True)
-    existing = {}
-    if p.exists():
-        try:
-            existing = json.loads(p.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    existing.update(values)
-    p.write_text(json.dumps(existing, indent=2), encoding="utf-8")
+    try:
+        p.parent.mkdir(parents=True, exist_ok=True)
+        existing = _read_existing_config(p)
+        existing.update(values)
+        safe_save_config(p, existing)
+    except Exception as exc:
+        logger.warning("mastra: config save failed at %s: %s", p, exc)
+
+
+def _read_existing_config(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
 def is_port_open(host: str, port: int, timeout: float = 0.4) -> bool:
@@ -115,7 +142,39 @@ def read_pid() -> int | None:
 
 
 def write_pid(pid: int) -> None:
-    pid_file().write_text(str(pid), encoding="utf-8")
+    safe_write_pid(pid_file(), pid)
+
+
+def safe_write_pid(path: Path, pid: int) -> bool:
+    try:
+        path.write_text(str(pid), encoding="utf-8")
+        return True
+    except Exception as exc:
+        logger.warning("mastra: pid write failed at %s: %s", path, exc)
+        return False
+
+
+def safe_log_file(path: Path) -> Path | None:
+    try:
+        if not path.parent.parent.exists():
+            raise FileNotFoundError(path.parent.parent)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch(exist_ok=True)
+        return path
+    except Exception as exc:
+        logger.warning("mastra: log file unavailable at %s: %s", path, exc)
+        return None
+
+
+def safe_save_config(path: Path, values: dict) -> bool:
+    try:
+        if not path.parent.exists():
+            raise FileNotFoundError(path.parent)
+        path.write_text(json.dumps(values, indent=2), encoding="utf-8")
+        return True
+    except Exception as exc:
+        logger.warning("mastra: config write failed at %s: %s", path, exc)
+        return False
 
 
 def clear_pid() -> None:

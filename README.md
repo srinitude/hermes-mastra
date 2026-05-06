@@ -50,6 +50,23 @@ The full power of [`@mastra/memory`](https://mastra.ai/docs/memory/overview) plu
 
 ---
 
+## Resilience guarantees
+
+Grounded against the cached Hermes, Mastra, Bun, and Hono source/doc evidence in [`analysis/research/`](analysis/research/) and enforced by the RED resilience suite:
+
+- **No hook raises into Hermes.** Hot-path work crosses `safe_call` / `async_runner`; chaos tests fault the client and assert the provider still returns.
+- **No hot-path blocking.** `prefetch`, `sync_turn`, `on_pre_compress`, `on_session_end`, `on_memory_write`, and `on_delegation` enqueue I/O and stay below the 100 ms p99 budget under 500 ms client latency.
+- **Fail-closed upstream calls.** `MastraClient` validates response size/JSON/schema at the boundary and runs HTTP through a circuit breaker that opens after repeated failures, half-opens after cooldown, and returns cached/no-op results while open.
+- **No profile leakage.** `RecallCache` is keyed by `(profile, thread)`, bounded by LRU, and cleared synchronously on profile/session switches before a new recall can be served.
+- **Idempotent observations.** Manual and mirrored observation writes deduplicate on `(thread, profile, kind, normalized_text)` through a bounded LRU.
+- **Bounded saturation.** The async runner drops oldest queued work under pathological bursts, increments diagnostics, and emits one `queue_saturation` log per burst without blocking producers.
+- **Server hard-fail boundary.** The Bun listener declares `idleTimeout` and an `error` response path that returns structured 503 JSON instead of wedging requests.
+- **Cron/partial-init safety.** Cron contexts skip server bring-up and tool exposure; partially initialized providers stay deterministic no-ops until the next successful initialize.
+
+Current resilience benchmark: fault-injected hot-path p99 **0.03 ms**, 0 escaped hook failures; raw numbers in [`references/last-benchmark.json`](references/last-benchmark.json).
+
+---
+
 ## Quick install
 
 ```bash

@@ -1,7 +1,7 @@
 /** Core memory routes — health, messages, recall, working memory, observation, flush. */
 
 import { Hono } from "hono";
-import { RECALL_TOP_K, resourceFor } from "./config";
+import { DB_URL, RECALL_TOP_K, resourceFor, STARTED_AT } from "./config";
 import { mkMessage } from "./helpers";
 import { ensureThread, memory, profilesSeen } from "./resources";
 
@@ -13,6 +13,16 @@ app.get("/health", (c) =>
     version: "0.2.0",
     profiles_seen: [...profilesSeen],
     pid: process.pid,
+  }),
+);
+
+app.get("/api/memory/healthz", (c) =>
+  c.json({
+    ok: true,
+    pid: process.pid,
+    started_at: STARTED_AT,
+    db: DB_URL ? "configured" : "missing",
+    profile_count: profilesSeen.size,
   }),
 );
 

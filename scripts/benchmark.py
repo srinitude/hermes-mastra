@@ -15,6 +15,9 @@ so the value of the cache + bounded async queue is visible.
 Run via:  mise run bench
         ⇒  prints a markdown table + writes references/last-benchmark.json
            so CI / future contributors can detect regressions.
+
+Resilience mode (`mise run bench:resilience`) injects fault scenarios and
+asserts hot-path p99 stays under the 100ms contract budget.
 """
 
 from __future__ import annotations
@@ -303,6 +306,38 @@ def bench_cache_freshness() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Resilience mode: fault-injected hot-path budget
+# ---------------------------------------------------------------------------
+
+
+def bench_resilience() -> dict[str, Any]:
+    async_runner.reset()
+    p = _make_provider(_slow_client(0.5))
+    p._cfg["fault_injection"] = True
+    cases = [
+        lambda: p.prefetch("fault"),
+        lambda: p.sync_turn("u", "a"),
+        lambda: p.on_pre_compress([]),
+        lambda: p.on_session_end([]),
+        lambda: p.on_memory_write("add", "MEMORY.md", "x"),
+        lambda: p.on_delegation("task", "result"),
+    ]
+    samples = []
+    failures = 0
+    for fn in cases * 20:
+        try:
+            t0 = time.perf_counter()
+            fn()
+            samples.append(time.perf_counter() - t0)
+        except Exception:
+            failures += 1
+    p.shutdown()
+    async_runner.reset()
+    stats = _percentiles(samples or [0.0])
+    return {"fault_injection": stats, "failures": failures, "budget_ms": 100}
+
+
+# ---------------------------------------------------------------------------
 # Reporting
 # ---------------------------------------------------------------------------
 
@@ -354,22 +389,38 @@ def render_markdown(results: dict[str, Any]) -> str:
         f"- Background recalls completed during run: **{cf['background_recalls_completed']}**\n"
     )
 
+    if "resilience" in results:
+        rf = results["resilience"]["fault_injection"]
+        lines.append("\n## Resilience — fault-injected hot-path latency\n")
+        lines.append(f"- p99: **{rf['p99_ms']:.2f} ms** under fault injection")
+        lines.append(f"- Failures escaping hooks: **{results['resilience']['failures']}**\n")
+
     lines.append(
-        "\n_Reproduce: `mise run bench`. Raw numbers in `references/last-benchmark.json`._\n"
+        "\n_Reproduce: `mise run bench` or `mise run bench:resilience`. "
+        "Raw numbers in `references/last-benchmark.json`._\n"
     )
     return "\n".join(lines)
 
 
 def main() -> int:
-    print("running benchmarks (~15s) ...", file=sys.stderr)
+    resilience = "--resilience" in sys.argv
+    print(
+        "running resilience benchmarks ..." if resilience else "running benchmarks (~15s) ...",
+        file=sys.stderr,
+    )
     t0 = time.perf_counter()
     results = {
-        "version": 1,
+        "version": 2,
         "started_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "hot_path": bench_hot_path(),
         "runner": bench_runner_throughput(),
         "cache_freshness": bench_cache_freshness(),
     }
+    if resilience:
+        results["resilience"] = bench_resilience()
+        p99 = results["resilience"]["fault_injection"]["p99_ms"]
+        if p99 >= results["resilience"]["budget_ms"]:
+            return 1
     results["wall_seconds"] = round(time.perf_counter() - t0, 2)
 
     out_dir = ROOT / "references"

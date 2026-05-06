@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-06
+
+### Added
+
+- **Resilience layer.** Added fail-closed `CircuitBreaker`, stdlib response guards, bounded observation deduplication, profile/thread LRU recall cache, server-supervisor restart policy, filesystem-safe write helpers, and cron/partial-init no-op paths.
+- **Fault-injection gates.** Added the resilience RED suite plus `tests/test_chaos_resilience.py`, `mise run chaos`, and `mise run bench:resilience`.
+- **Server hard-fail boundary.** Bun now declares `idleTimeout`, a structured `error` handler, and `/api/memory/healthz` probe data.
+
+### Changed
+
+- `MastraClient` now validates response payloads before use, rotates auth on 401 from `auth_token_env`, deduplicates repeated observations, and runs HTTP calls through the circuit breaker.
+- Capacity hints now recommend `mastra_observe` only when built-in memory is >=50% and observations are below the action floor; explicit recall phrasing with an empty cache recommends `mastra_search`.
+- `references/last-benchmark.{json,md}` now includes fault-injected resilience numbers.
+
+### Verified
+
+- `mise run test:py` passes (648 tests).
+- `mise run chaos` passes.
+- `mise run bench:resilience` passes with fault-injected hot-path p99 **0.03 ms** and 0 escaped hook failures.
+- `mise run compat:hermes` and `mise run compat:mastra` pass against cached upstream sources.
+
 ## [0.2.1] - 2026-05-05
 
 ### Fixed

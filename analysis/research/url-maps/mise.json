@@ -1,0 +1,1102 @@
+{
+  "success": true,
+  "data": {
+    "links": [
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/run.html",
+        "title": "mise tasks run | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/environments/secrets/sops.html",
+        "title": "sops | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/github.html",
+        "title": "GitHub Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev",
+        "title": "Home | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/github-tokens.html",
+        "title": "GitHub Tokens | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/cargo.html",
+        "title": "Cargo Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/dotnet.html",
+        "title": "Dotnet backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/task-arguments.html",
+        "title": "Task Arguments | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/registry.html",
+        "title": "mise registry | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell-alias/set.html",
+        "title": "mise shell-alias set | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell-alias/get.html",
+        "title": "mise shell-alias get | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/link.html",
+        "title": "mise link | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-alias/get.html",
+        "title": "mise tool-alias get | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/rust.html",
+        "title": "Rust | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool.html",
+        "title": "mise tool | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings/ls.html",
+        "title": "mise settings ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/env.html",
+        "title": "mise env | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/architecture.html",
+        "title": "Task System Architecture | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-stub.html",
+        "title": "mise tool-stub | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/en.html",
+        "title": "mise en | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/cache/path.html",
+        "title": "mise cache path | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/install-into.html",
+        "title": "mise install-into | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/environments/secrets",
+        "title": "Secrets | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/forgejo.html",
+        "title": "Forgejo Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/uninstall.html",
+        "title": "mise uninstall | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/conda.html",
+        "title": "Conda Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/backends.html",
+        "title": "mise backends | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate.html",
+        "title": "mise generate | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/completion.html",
+        "title": "mise completion | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/elixir.html",
+        "title": "Elixir | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/doctor.html",
+        "title": "mise doctor | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/exec.html",
+        "title": "mise exec | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/monorepo.html",
+        "title": "Monorepo Tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/install.html",
+        "title": "mise install | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/glossary.html",
+        "title": "Glossary | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/ls.html",
+        "title": "mise plugins ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/token/github.html",
+        "title": "mise token github | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/oci/push.html",
+        "title": "mise oci push | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/asdf.html",
+        "title": "asdf Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/environments",
+        "title": "Environments | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/ls-remote.html",
+        "title": "mise plugins ls-remote | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/use.html",
+        "title": "mise use | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/npm.html",
+        "title": "npm Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/aqua.html",
+        "title": "Aqua Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell-alias.html",
+        "title": "mise shell-alias | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/mise-oci.html",
+        "title": "mise oci | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/task-docs.html",
+        "title": "mise generate task-docs | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/deps.html",
+        "title": "Deps | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/file-tasks.html",
+        "title": "File Tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/paranoid.html",
+        "title": "Paranoid | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-alias/set.html",
+        "title": "mise tool-alias set | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/node.html",
+        "title": "Node | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/hooks.html",
+        "title": "Hooks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends",
+        "title": "Backends | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/swift.html",
+        "title": "Swift | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/ls-remote.html",
+        "title": "mise ls-remote | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/neovim.html",
+        "title": "Mise + Neovim Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/terraform.html",
+        "title": "Mise + Terraform/Opentofu Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/python.html",
+        "title": "Python | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/sandboxing.html",
+        "title": "Sandboxing | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/info.html",
+        "title": "mise tasks info | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/test-tool.html",
+        "title": "mise test-tool | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/update.html",
+        "title": "mise plugins update | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/plugin-publishing.html",
+        "title": "Plugin Publishing | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/git-pre-commit.html",
+        "title": "mise generate git-pre-commit | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/bootstrap.html",
+        "title": "mise generate bootstrap | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/config/get.html",
+        "title": "mise config get | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/cache/prune.html",
+        "title": "mise cache prune | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/devcontainer.html",
+        "title": "mise generate devcontainer | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/deps/add.html",
+        "title": "mise deps add | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools",
+        "title": "Dev Tools | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/python.html",
+        "title": "Mise + Python Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/mise-lock.html",
+        "title": "mise.lock Lockfile | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/toml-tasks.html",
+        "title": "TOML-based Tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/which.html",
+        "title": "mise which | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings/get.html",
+        "title": "mise settings get | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/gitlab.html",
+        "title": "GitLab Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/ruby.html",
+        "title": "Ruby | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/url-replacements.html",
+        "title": "URL Replacements | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/cache/clear.html",
+        "title": "mise cache clear | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/ruby.html",
+        "title": "Mise + Ruby Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/prune.html",
+        "title": "mise prune | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/tool-stubs.html",
+        "title": "Tool Stubs | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/environments/secrets/age.html",
+        "title": "Direct age Encryption | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/configuration/settings.html",
+        "title": "Settings | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/running-tasks.html",
+        "title": "Running Tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/validate.html",
+        "title": "mise tasks validate | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings/unset.html",
+        "title": "mise settings unset | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings/set.html",
+        "title": "mise settings set | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/bun.html",
+        "title": "Bun | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/unset.html",
+        "title": "mise unset | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/token/gitlab.html",
+        "title": "mise token gitlab | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backend_architecture.html",
+        "title": "Backend Architecture | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/reshim.html",
+        "title": "mise reshim | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/templates.html",
+        "title": "Templates | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/sync/node.html",
+        "title": "mise sync node | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/sync.html",
+        "title": "mise sync | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/latest.html",
+        "title": "mise latest | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/s3.html",
+        "title": "S3 Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-alias/unset.html",
+        "title": "mise tool-alias unset | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins.html",
+        "title": "mise plugins | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/core-tools.html",
+        "title": "Core Tools | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/shell-aliases.html",
+        "title": "Shell Aliases | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/upgrade.html",
+        "title": "mise upgrade | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/oci.html",
+        "title": "mise oci | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/search.html",
+        "title": "mise search | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/lock.html",
+        "title": "mise lock | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/direnv.html",
+        "title": "direnv | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/cpp.html",
+        "title": "Mise + C++ Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/config/ls.html",
+        "title": "mise config ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/ubi.html",
+        "title": "Ubi Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/activate.html",
+        "title": "mise activate | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/install.html",
+        "title": "mise plugins install | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/deps/remove.html",
+        "title": "mise deps remove | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/token/forgejo.html",
+        "title": "mise token forgejo | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/continuous-integration.html",
+        "title": "Continuous integration | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell-alias/unset.html",
+        "title": "mise shell-alias unset | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/deps.html",
+        "title": "mise deps | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/go.html",
+        "title": "Go | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/comparison-to-asdf.html",
+        "title": "Comparison to asdf | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/fmt.html",
+        "title": "mise fmt | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/plugins.html",
+        "title": "Plugins | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks.html",
+        "title": "mise tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/shell-tricks.html",
+        "title": "Shell tricks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/walkthrough.html",
+        "title": "Walkthrough | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mcp.html",
+        "title": "Model Context Protocol (MCP) | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/mcp.html",
+        "title": "mise mcp | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/contributing.html",
+        "title": "Contributing | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/registry.html",
+        "title": "Registry | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/ls.html",
+        "title": "mise ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/team.html",
+        "title": "Team | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/self-update.html",
+        "title": "mise self-update | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/troubleshooting.html",
+        "title": "Troubleshooting | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/installing-mise.html",
+        "title": "Installing Mise | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/http.html",
+        "title": "HTTP Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/directories.html",
+        "title": "Directory Structure | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/contact.html",
+        "title": "Contact | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/cache.html",
+        "title": "mise cache | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/deactivate.html",
+        "title": "mise deactivate | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/ide-integration.html",
+        "title": "IDE Integration | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell.html",
+        "title": "mise shell | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/env-plugin-development.html",
+        "title": "Environment Plugin Development | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks",
+        "title": "Tasks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/zig.html",
+        "title": "Zig | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/sync/python.html",
+        "title": "mise sync python | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/token.html",
+        "title": "mise token | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/pipx.html",
+        "title": "pipx Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/shims.html",
+        "title": "Shims | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/shell-alias/ls.html",
+        "title": "mise shell-alias ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/tool-stub.html",
+        "title": "mise generate tool-stub | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/link.html",
+        "title": "mise plugins link | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/deps/install.html",
+        "title": "mise deps install | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings.html",
+        "title": "mise settings | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/unuse.html",
+        "title": "mise unuse | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/deps.html",
+        "title": "mise tasks deps | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/nodejs.html",
+        "title": "Mise + Node.js Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/vfox.html",
+        "title": "Vfox Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/plugin-lua-modules.html",
+        "title": "Plugin Lua Modules | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/erlang.html",
+        "title": "Erlang | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/how-i-use-mise.html",
+        "title": "How I use mise | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/config.html",
+        "title": "mise config | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/task-configuration.html",
+        "title": "Task Configuration | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/docker.html",
+        "title": "Mise + Docker Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/getting-started.html",
+        "title": "Getting Started | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/version.html",
+        "title": "mise version | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/edit.html",
+        "title": "mise tasks edit | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/java.html",
+        "title": "Java | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/configuration.html",
+        "title": "Configuration | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/backend-plugin-development.html",
+        "title": "Backend Plugin Development | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/settings/add.html",
+        "title": "mise settings add | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/dotnet.html",
+        "title": ".NET | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/sync/ruby.html",
+        "title": "mise sync ruby | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/where.html",
+        "title": "mise where | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/edit.html",
+        "title": "mise edit | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/rtx.html",
+        "title": "Coming from rtx | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/errors.html",
+        "title": "Errors | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/architecture.html",
+        "title": "mise Architecture | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/add.html",
+        "title": "mise tasks add | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/about.html",
+        "title": "About | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/lang/deno.html",
+        "title": "Deno | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tasks/ls.html",
+        "title": "mise tasks ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/github-action.html",
+        "title": "mise generate github-action | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cache-behavior.html",
+        "title": "Cache Behavior | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/asdf-legacy-plugins.html",
+        "title": "asdf (Legacy) Plugins | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/oci/build.html",
+        "title": "mise oci build | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/README.html",
+        "title": "mise-docs | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/demo.html",
+        "title": "Demo | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tool-plugin-development.html",
+        "title": "Tool Plugin Development | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/set.html",
+        "title": "mise set | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/backends/ls.html",
+        "title": "mise backends ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/untrust.html",
+        "title": "mise untrust | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/doctor/path.html",
+        "title": "mise doctor path | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/configuration/environments.html",
+        "title": "Config Environments | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tips-and-tricks.html",
+        "title": "Tips & Tricks | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/external-resources.html",
+        "title": "External Resources | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/tasks/templates.html",
+        "title": "Task Templates | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/gem.html",
+        "title": "gem Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/bin-paths.html",
+        "title": "mise bin-paths | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/trust.html",
+        "title": "mise trust | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/plugins/uninstall.html",
+        "title": "mise plugins uninstall | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/implode.html",
+        "title": "mise implode | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook",
+        "title": "Cookbook | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/config.html",
+        "title": "mise generate config | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli",
+        "title": "mise | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/spm.html",
+        "title": "SPM Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/run.html",
+        "title": "mise run | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/aliases.html",
+        "title": "Tool Aliases | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-alias.html",
+        "title": "mise tool-alias | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/faq.html",
+        "title": "FAQs | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/mise-cookbook/presets.html",
+        "title": "Presets | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/dev-tools/backends/go.html",
+        "title": "Go Backend | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/watch.html",
+        "title": "mise watch | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/outdated.html",
+        "title": "mise outdated | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/plugin-usage.html",
+        "title": "Using Plugins | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/generate/task-stubs.html",
+        "title": "mise generate task-stubs | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/oci/run.html",
+        "title": "mise oci run | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/tool-alias/ls.html",
+        "title": "mise tool-alias ls | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/config/set.html",
+        "title": "mise config set | mise-en-place",
+        "description": "mise-en-place documentation"
+      },
+      {
+        "url": "https://mise.jdx.dev/cli/cache",
+        "title": "mise cache | mise-en-place",
+        "description": "Run mise cache with no args to view the current cache directory. Subcommands ​. mise cache clear [PLUGIN]… mise cache path · mise cache ..."
+      }
+    ]
+  }
+}

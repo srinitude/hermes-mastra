@@ -54,6 +54,32 @@ _SCHEMA: list[dict[str, Any]] = [
     },
     {"key": "recall_top_k", "description": "Observations injected per turn", "default": "4"},
     {
+        "key": "breaker_threshold",
+        "description": "Failures before Mastra HTTP breaker opens",
+        "default": "5",
+    },
+    {
+        "key": "breaker_cooldown_seconds",
+        "description": "Breaker cooldown before half-open probe",
+        "default": "5.0",
+    },
+    {
+        "key": "supervisor_max_restarts_per_minute",
+        "description": "Maximum bounded Bun restarts per minute",
+        "default": "3",
+    },
+    {
+        "key": "recall_cache_lru_size",
+        "description": "Profile/thread recall-cache LRU entries",
+        "default": "32",
+    },
+    {"key": "dedup_lru_size", "description": "Observation dedup LRU entries", "default": "512"},
+    {
+        "key": "response_max_bytes",
+        "description": "Maximum Mastra HTTP response bytes",
+        "default": "1000000",
+    },
+    {
         "key": "temporal_markers",
         "description": "Insert temporal-gap markers",
         "default": "true",
