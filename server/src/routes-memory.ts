@@ -10,7 +10,7 @@ const app = new Hono();
 app.get("/health", (c) =>
   c.json({
     ok: true,
-    version: "0.2.0",
+    version: "0.2.2",
     profiles_seen: [...profilesSeen],
     pid: process.pid,
   }),
