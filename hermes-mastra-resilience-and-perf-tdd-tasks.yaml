@@ -1247,7 +1247,7 @@ phases:
         prerequisites:
           - "X02 numbers persisted"
         dependencies: [X02, X07]
-        blocking_tasks: []
+        blocking_tasks: [X10]
         validation_steps:
           - "analysis/memory-performance-plan.md describes the resilience layer + perf budgets"
           - "README.md adds a 'Resilience guarantees' section enumerating each promise"
@@ -1269,7 +1269,7 @@ phases:
           - "X07 cleanup verified"
           - "X08 docs updated"
         dependencies: [X07, X08]
-        blocking_tasks: []
+        blocking_tasks: [X10]
         validation_steps:
           - "Final commit is a single squashed commit with [name] <email> trailer; no co-authors"
           - "Topic branch pushed; PR opened with resilience guarantees + benchmark deltas in body"
@@ -1285,6 +1285,32 @@ phases:
         context_files: ["AGENTS.md", "CHANGELOG.md"]
         context_urls: []
         principle_ids: [P17]
+
+      - id: X10
+        title: "REFACTOR thorough ./README.md update (resilience guarantees, knobs, tasks, install, benchmarks)"
+        status: pending
+        prerequisites:
+          - "X08 baseline README update landed"
+          - "X09 squashed PR opened"
+        dependencies: [X08, X09]
+        blocking_tasks: []
+        validation_steps:
+          - "./README.md reconciles every section against the shipped code (provider hooks, tool list, CLI, config surface, mise tasks)"
+          - "./README.md contains an explicit 'Resilience guarantees' section enumerating every promise from the goal contract"
+          - "./README.md documents every new resilience config knob (breaker_threshold, breaker_cooldown_seconds, supervisor_max_restarts_per_minute, recall_cache_lru_size, dedup_lru_size, response_max_bytes)"
+          - "./README.md documents mise run chaos and mise run bench:resilience"
+          - "./README.md quick-install block matches the bumped plugin.yaml version"
+          - "./README.md embeds the latest measured benchmark numbers (chaos-mode + resilience-mode) from references/last-benchmark.md"
+          - "Every non-trivial README claim cites an opensrc path or a Firecrawl-scraped URL under analysis/research/"
+          - "mise run quality stays green after the README update"
+        ci_commands: [CC_quality, CC_validate]
+        styleguide_rules: [S8_user_facing_validation, S6_real_behavior_only]
+        guardrails: [G8_redact_secrets_in_logs, G2_no_monkeypatching_core]
+        learnings: []
+        gotchas: []
+        context_files: ["README.md", "plugin.yaml", "tool_schemas.py", "server_config.py", "mastra_options.py", "mise.toml", "references/last-benchmark.md", "hermes-mastra-resilience-and-perf-goal.md"]
+        context_urls: ["https://hermes-agent.nousresearch.com/docs/developer-guide/memory-provider-plugin"]
+        principle_ids: [P14, P17]
 
 agent_runtime_protocol:
   status_transitions:

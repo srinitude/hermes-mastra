@@ -1,6 +1,6 @@
 ---
 generated_by: goal-prompt-generator
-goal_prompt_generator_version: "1.0.1"
+goal_prompt_generator_version: "1.2.0"
 optimized_for: hermes-agent-goal
 optimization_status: optimized
 source_prompt_hash: "db904c9b7096ba7655399b737a05ca4ba5857402865def3d86b6145d0883d835"
@@ -93,7 +93,7 @@ If Firecrawl or `opensrc` is unavailable at execution time, mark the affected va
 1. **Performance** — formal hot-path latency budget (every hook < 100 ms p99 with a slow client; sub-millisecond p50), measured by an extended `scripts/benchmark.py`; semantic recall warm-cache prefetch on profile/thread switch; reduced HTTP round-trips per turn (batched `save_turn`+`recall` where contract allows); request coalescing for back-to-back recalls; tightened `httpx.Timeout` profile per call site; LRU cap on `RecallCache` per (profile, thread) tuple; Bun `Bun.serve` `idleTimeout` + `error` handler tuned for fast hard-fail.
 2. **Smartness** — observation deduplication on `write_observation` (idempotency key = sha256 of `(thread, profile, kind, normalized_text)`); profile-aware capacity hint thresholds tied to *both* MEMORY.md/USER.md fill *and* observation count; smarter `_capacity_hint` that suggests the precise tool to call (`mastra_observe` vs `mastra_search`) based on the missing context type; query-aware semantic-recall short-circuit when the user's last message contains an explicit recall verb (`remember`, `last time`, `we did`); Reflector-driven importance-weighted recall ranking; lineage-aware session continuity that reads parent thread observations into the new thread's prefetch on `do_session_switch` with `parent_session_id`.
 3. **Unbreakability (resilience)** — circuit breaker around `MastraClient` (open after N consecutive failures, half-open after backoff, fail-closed to no-op); supervisor-style auto-restart of the Bun server on crash, gated by exponential backoff and a max-restarts/min cap; structured failure classification (`expected | retryable | defect`) preserved through `safe_call`; all `MastraClient` HTTP calls validate response shape before deserialization; runner queue saturation observability (counter + structured log) and explicit drop-oldest test under verified pathological load; disk-full / permission-denied / read-only-FS handling on PID file write, log file write, config write; chaos test suite (`tests/test_chaos_*.py`) that fault-injects on every hot-path entry point and asserts the agent still completes a turn; cron-context skip path proved via test; partial-init path (`do_initialize` raised before `_client` set) proved no-op via test; malformed JSON / non-JSON server responses tolerated; auth-token rotation tolerated mid-session; SIGTERM/SIGINT during `shutdown()` preserves in-flight writes when within `wait` budget.
-4. **Tooling & docs** — extend `scripts/benchmark.py` with chaos and perf-regression modes; add `mise run chaos` task that runs the chaos suite under randomized fault injection; add `mise run bench:resilience` task that asserts hot-path budgets *with* fault injection enabled; refresh `analysis/memory-performance-plan.md`, `analysis/plugin-clash-analysis.md`, and `references/last-benchmark.md`; update `README.md`'s "What it does" + "Resilience guarantees" sections; update `CHANGELOG.md` with one squashed-commit-aligned entry.
+4. **Tooling & docs** — extend `scripts/benchmark.py` with chaos and perf-regression modes; add `mise run chaos` task that runs the chaos suite under randomized fault injection; add `mise run bench:resilience` task that asserts hot-path budgets *with* fault injection enabled; refresh `analysis/memory-performance-plan.md`, `analysis/plugin-clash-analysis.md`, and `references/last-benchmark.md`; perform a **thorough `./README.md` rewrite pass** that (a) reconciles every section with the shipped code (provider hooks, tools, CLI, config knobs, tasks, bench gates), (b) adds an explicit "Resilience guarantees" section enumerating every promise (no raise-into-host, hot-path p99 budget, fail-closed breaker, response guard, recall-cache profile/thread isolation, observation dedup, server health boundary, cron/partial-init no-op, filesystem-safe writes, auth rotation, queue saturation bounds), (c) documents the new resilience config knobs (`breaker_threshold`, `breaker_cooldown_seconds`, `supervisor_max_restarts_per_minute`, `recall_cache_lru_size`, `dedup_lru_size`, `response_max_bytes`), (d) documents `mise run chaos` and `mise run bench:resilience`, (e) refreshes the quick-install block and the tool/hook tables against the current `plugin.yaml` version and `tool_schemas.py`, and (f) embeds the latest measured benchmark numbers — with every non-trivial claim cross-referenced to an `opensrc` path or a Firecrawl-scraped URL under `analysis/research/`; update `CHANGELOG.md` with one squashed-commit-aligned entry for the bumped patch version.
 
 ### Out of Scope
 
@@ -102,7 +102,7 @@ If Firecrawl or `opensrc` is unavailable at execution time, mark the affected va
 - New Hermes-side hooks not already in `plugin.yaml` (`on_session_end`, `on_session_switch`, `on_pre_compress`, `on_memory_write`, `on_delegation`).
 - Any change to Hermes Agent core (`agent/memory_provider.py`, `agent/memory_manager.py`, `hermes_cli/plugins.py`) — read-only reference only.
 - Anything that requires monkey-patching agent core modules or mutating kwargs passed to hooks.
-- Documentation rewrite beyond what is needed to describe the new behaviour and the resilience guarantees.
+- Documentation rewrite beyond what is needed to describe the new behaviour, the resilience guarantees, and the thorough `./README.md` refresh required under Scope §4.
 
 ## Execution Plan
 
@@ -149,7 +149,7 @@ Write the **minimum** production code to make every RED test pass. No gold-plati
 9. Server-side: add `Bun.serve({ idleTimeout, error })` config in `server/src/index.ts`; add a `/api/memory/healthz` route returning richer probe data; ensure every route returns within 5 s with a 503 + structured error rather than hanging.
 10. Add typed config knobs to `server_config.py` and `mastra_options.py` (`breaker_threshold`, `breaker_cooldown_seconds`, `supervisor_max_restarts_per_minute`, `recall_cache_lru_size`, `dedup_lru_size`, `response_max_bytes`); validate at load time, redact in logs, fail-fast on malformed values.
 11. Add `mise run chaos` and `mise run bench:resilience` tasks; both must be additive — `quality` stays green without them by default.
-12. Update `analysis/memory-performance-plan.md`, `references/last-benchmark.md`, `README.md`, and `CHANGELOG.md` with the new guarantees and measured numbers.
+12. Update `analysis/memory-performance-plan.md`, `references/last-benchmark.md`, `README.md`, and `CHANGELOG.md` with the new guarantees and measured numbers. The `./README.md` pass is thorough and must satisfy every sub-bullet listed under Scope §4 (hook/tool/CLI reconciliation, explicit "Resilience guarantees" section, documented new config knobs, documented new mise tasks, refreshed install block aligned with the bumped `plugin.yaml` version, and embedded latest benchmark numbers with cited sources).
 
 ### Phase 3: REFACTOR
 
@@ -243,7 +243,7 @@ Engineer software as explicit, typed, observable, cancellable, resource-safe wor
 12. Malformed server responses do not raise into the host loop (`tests/test_response_validation.py`).
 13. The cron-context skip path is enforced and tested (`tests/test_cron_context_safety.py`).
 14. The smarter `_capacity_hint` is verified by `tests/test_capacity_hint_smartness.py`.
-15. `analysis/memory-performance-plan.md`, `README.md`, and `CHANGELOG.md` describe the new guarantees and benchmark deltas.
+15. `analysis/memory-performance-plan.md`, `README.md`, and `CHANGELOG.md` describe the new guarantees and benchmark deltas. The `./README.md` update is thorough: it reconciles every section against the shipped code (provider hooks, tool list, CLI, config surface, mise tasks), adds a "Resilience guarantees" section enumerating every promise, documents the new config knobs (`breaker_threshold`, `breaker_cooldown_seconds`, `supervisor_max_restarts_per_minute`, `recall_cache_lru_size`, `dedup_lru_size`, `response_max_bytes`) and new mise tasks (`mise run chaos`, `mise run bench:resilience`), refreshes the quick-install block to match the bumped `plugin.yaml` version, and embeds the latest measured benchmark numbers.
 16. Final commit is squashed and authored as `[<your-name>] <your-email>` with no co-author trailers (per `AGENTS.md`).
 17. Every public-API claim made in code comments or docs is cited against an `opensrc` path or a Firecrawl-scraped URL captured under `analysis/research/`.
 
@@ -292,7 +292,7 @@ The goal is **incomplete or invalid** if any of the following hold:
 1. A green CI run on the merged PR; a single squashed commit with the user's `[name] <email>` trailer.
 2. Updated `analysis/memory-performance-plan.md` describing the new resilience layer, the perf budgets, the smartness rules, and how each is enforced.
 3. Updated `references/last-benchmark.md` (and `references/last-benchmark.json`) with chaos-mode + resilience-mode numbers.
-4. Updated `README.md` "Resilience guarantees" section enumerating every promise the plugin now makes.
+4. Updated `./README.md` with a thorough pass: a new "Resilience guarantees" section enumerating every promise; a "Configuration" entry for every new resilience knob (`breaker_threshold`, `breaker_cooldown_seconds`, `supervisor_max_restarts_per_minute`, `recall_cache_lru_size`, `dedup_lru_size`, `response_max_bytes`); documentation for the new `mise run chaos` and `mise run bench:resilience` tasks; a refreshed install block that matches the bumped `plugin.yaml` version; and embedded latest measured benchmark numbers (chaos-mode + resilience-mode). Every non-trivial claim is cross-referenced to an `opensrc` path or a Firecrawl-scraped URL under `analysis/research/`.
 5. Updated `CHANGELOG.md` entry under the new version.
 6. New tests under `tests/test_chaos_*.py` and the RED set listed above; new helpers under `tests/helpers/`.
 7. New production modules: `circuit_breaker.py`, `response_guard.py`, `supervisor.py`, `observation_dedup.py`; extended `recall_cache.py`, `provider_lifecycle.py`, `lifecycle_helpers.py`, `__init__.py`, `server_config.py`, `mastra_options.py`, `server/src/index.ts`.

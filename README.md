@@ -63,7 +63,7 @@ Grounded against the cached Hermes, Mastra, Bun, and Hono source/doc evidence in
 - **Server hard-fail boundary.** The Bun listener declares `idleTimeout` and an `error` response path that returns structured 503 JSON instead of wedging requests.
 - **Cron/partial-init safety.** Cron contexts skip server bring-up and tool exposure; partially initialized providers stay deterministic no-ops until the next successful initialize.
 
-Current resilience benchmark: fault-injected hot-path p99 **0.03 ms**, 0 escaped hook failures; raw numbers in [`references/last-benchmark.json`](references/last-benchmark.json).
+Current resilience benchmark (2026-05-06, plugin v0.2.2): fault-injected hot-path p99 **0.03 ms**, 0 escaped hook failures, chaos loop green 10/10; raw numbers in [`references/last-benchmark.json`](references/last-benchmark.json) and [`references/last-benchmark.md`](references/last-benchmark.md). Reproduce with `mise run bench:resilience` and `mise run chaos`.
 
 ---
 
@@ -385,6 +385,30 @@ All config lives in `~/.hermes/mastra.json`. Edit by re-running `hermes mastra s
 | `context_engine_pressure_fraction` | `0.50` | Boost `recall_top_k` once prompt tokens cross this fraction of the compressor's threshold |
 | `context_engine_boosted_top_k` | `8` | Value to boost `recall_top_k` to under pressure |
 
+### Resilience knobs (new in 0.2.2)
+
+These knobs tune the fail-closed client boundary, the server supervisor, the bounded observation dedup cache, the partitioned recall cache, and the response guard. All are optional — defaults are chosen to be safe on every shipped hook and are enforced by [`tests/test_resilience_hot_path.py`](tests/test_resilience_hot_path.py) and the chaos suite.
+
+| Key | Default | Purpose |
+|-----|--------:|---------|
+| `breaker_threshold` | `5` | Consecutive `MastraClient` HTTP failures before the breaker opens |
+| `breaker_cooldown_seconds` | `5.0` | Cooldown before the breaker auto-half-opens for a probe call |
+| `supervisor_max_restarts_per_minute` | `3` | Cap on Bun auto-restarts per rolling minute (exponential backoff within the cap) |
+| `recall_cache_lru_size` | `32` | Entries the `(profile, thread)`-keyed `RecallCache` retains before LRU eviction |
+| `dedup_lru_size` | `512` | Idempotency-key slots for `(thread, profile, kind, normalized_text)` deduplication |
+| `response_max_bytes` | `1_000_000` | Hard cap on a single Mastra HTTP response body before the guard rejects it |
+| `auth_token_env` | `MASTRA_API_KEY` | Environment variable the client reads for its bearer token; rotated lazily on a 401 |
+
+Each value is validated at load time by `server_config._coerce_types`; a malformed value falls back to the default and logs a single warning (no secret ever lands in the log). Config keys also flow through the Hermes memory-setup wizard — see [`config_schema.py`](config_schema.py).
+
+### Verify & tune resilience
+
+```bash
+mise run chaos                 # fault-inject every hot path; asserts no raise into host
+mise run bench:resilience      # hot-path p99 budget under chaos mode; persists numbers
+mise run bench                 # baseline hot-path + queue + cache freshness
+```
+
 ### Choose your Observer & Reflector models
 
 Two roles, configured independently. The Observer runs frequently and should be cheap; the Reflector runs less often and should be stronger.
@@ -489,6 +513,7 @@ hermes mastra reset --profile <name> --yes   # skip confirmation
 │                                                                            │
 │   Routes:                                                                  │
 │     GET  /health                                                           │
+│     GET  /api/memory/healthz            (richer probe data: pid, uptime)   │
 │     POST /api/memory/messages           (turn ingestion)                   │
 │     GET  /api/memory/recall             (current thread's observations)    │
 │     GET  /api/memory/search             (keyword search)                   │
@@ -596,9 +621,11 @@ These use [Firecrawl](https://firecrawl.dev) to crawl upstream docs sites and wr
 
 | Task | Role | Side effects |
 |------|------|--------------|
-| `mise run bench` | Plugin's own benchmarks: hot-path latency, runner throughput, recall-cache freshness. | Writes results to stdout. |
+| `mise run bench` | Plugin's own benchmarks: hot-path latency, runner throughput, recall-cache freshness. | Writes results to stdout and `references/last-benchmark.{json,md}`. |
+| `mise run bench:resilience` | Runs `scripts/benchmark.py --resilience` — same metrics plus fault-injected hot-path p99 and `failures escaping hooks` count. **Asserts the plugin never raises into the host.** | Writes results to stdout and `references/last-benchmark.{json,md}`. |
 | `mise run bench:compare` | Comparative benchmark against the 8 other Hermes memory provider plugins. | Requires those plugins installed. |
-| `mise run bench:all` | Both. | Same. |
+| `mise run chaos` | Runs `tests/test_chaos_resilience.py` under randomized fault injection (slow client, saturated queue, profile flips). Green ten-in-a-row in CI. | None. |
+| `mise run bench:all` | `bench` + `bench:compare`. | Same. |
 
 ### 9. Diagnostics — when something is off
 
@@ -693,7 +720,11 @@ Profile credentials: each profile that uses the provider must be able to resolve
 | `mastra server is not running` | `hermes mastra server restart` then `hermes mastra logs` |
 | `mise run compat` reports "opensrc not found" | `mise run setup:opensrc` to install it (idempotent — skips if already present). The CI workflows run this best-effort and skip compat checks when offline. |
 | `GitHub API rate limit exceeded` (during `mise run compat`) | Set `GITHUB_TOKEN` in env so opensrc authenticates |
-| `Profile observations leaking across profiles` | Should never happen — verified by [`tests/test_hermes_link.py`](tests/test_hermes_link.py). If it does, file an issue with `hermes mastra resources` output. |
+| `Profile observations leaking across profiles` | Should never happen — verified by [`tests/test_profile_flip_safety.py`](tests/test_profile_flip_safety.py) and [`tests/test_hermes_link.py`](tests/test_hermes_link.py). If it does, file an issue with `hermes mastra resources` output. |
+| `Circuit breaker stays OPEN after upstream recovers` | Wait `breaker_cooldown_seconds` (default 5 s); one successful half-open probe closes it. Bump the threshold with `breaker_threshold` if your upstream is flappy. |
+| `references/last-benchmark.md says p99 regressed` | Run `mise run bench` once more to rule out noise; if it reproduces, open an issue and include `references/last-benchmark.json`. |
+| `queue_saturation log emitted repeatedly` | Expected under pathological load — drop-oldest preserves non-blocking producers. If sustained, reduce write volume or raise `async_runner` queue size (currently 256). |
+| `401 after rotating MASTRA_API_KEY` | `MastraClient` rebuilds lazily on the next 401; the old client closes automatically. If a retry still fails, ensure the new token is present in `os.environ[auth_token_env]` before the next hook fires. |
 
 For more, see `hermes mastra logs` and `~/.hermes/logs/agent.log`.
 
