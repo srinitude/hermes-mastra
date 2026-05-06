@@ -56,6 +56,22 @@ def _attach_auth(env: dict, cfg: dict) -> None:
         env["MASTRA_API_KEY"] = os.environ[auth_env]
 
 
+def _attach_embedder(env: dict) -> None:
+    if "MASTRA_EMBEDDER_MODEL" not in env:
+        env["MASTRA_EMBEDDER_MODEL"] = (
+            "openai/text-embedding-3-small"
+            if os.environ.get("OPENAI_API_KEY")
+            else "google/gemini-embedding-001"
+        )
+    google_key = (
+        os.environ.get("GOOGLE_GENERATIVE_AI_API_KEY")
+        or os.environ.get("GOOGLE_API_KEY")
+        or os.environ.get("GEMINI_API_KEY")
+    )
+    if google_key and "GOOGLE_GENERATIVE_AI_API_KEY" not in env:
+        env["GOOGLE_GENERATIVE_AI_API_KEY"] = google_key
+
+
 def _attach_options_payload(env: dict) -> None:
     try:
         try:
@@ -72,5 +88,6 @@ def build_server_env(cfg: dict) -> dict:
     env = _base_env(cfg)
     _attach_api_keys(env, cfg)
     _attach_auth(env, cfg)
+    _attach_embedder(env)
     _attach_options_payload(env)
     return env

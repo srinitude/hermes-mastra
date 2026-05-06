@@ -45,6 +45,8 @@ rsync -a \
   --exclude='mise.toml' \
   --exclude='.miserc.toml' \
   --exclude='*.bak.*' \
+  --exclude='*.test.ts' \
+  --exclude='*.spec.ts' \
   --exclude='bun.lock' \
   --exclude='.gitignore' \
   --exclude='.coderabbit*' \

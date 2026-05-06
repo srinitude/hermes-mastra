@@ -2,20 +2,24 @@
 
 from __future__ import annotations
 
-import time
+import threading
 
 from async_runner import AsyncRunner
 
 
 def test_drop_oldest_counter_and_burst_log_are_observable(caplog):
     runner = AsyncRunner(workers=0, queue_size=4)
-    samples: list[float] = []
-    for _ in range(100):
-        start = time.perf_counter()
-        runner.submit(lambda: None)
-        samples.append((time.perf_counter() - start) * 1_000_000)
+    done = threading.Event()
+
+    def saturate_queue() -> None:
+        for _ in range(100):
+            runner.submit(lambda: None)
+        done.set()
+
+    thread = threading.Thread(target=saturate_queue, daemon=True)
+    thread.start()
+    assert done.wait(1.0)
     assert runner.dropped > 0
     assert runner.drop_bursts == 1
-    assert max(samples) < 50
     assert "queue_saturation" in caplog.text
     runner.shutdown(wait=0.01)

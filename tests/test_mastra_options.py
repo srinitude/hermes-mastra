@@ -42,6 +42,48 @@ def test_default_mastra_options_includes_observational_memory(fake_hermes_home):
     assert opts["observationalMemory"] not in (False, None, {})
 
 
+def _assert_default_processor_options(opts: dict) -> None:
+    assert opts["workingMemory"]["enabled"] is True
+    assert opts["workingMemory"]["scope"] == "resource"
+    assert "# Hermes Working Memory" in opts["workingMemory"]["template"]
+    assert opts["lastMessages"] == 20
+    assert opts["semanticRecall"] == {
+        "topK": 5,
+        "messageRange": {"before": 2, "after": 2},
+        "scope": "resource",
+        "threshold": 0.65,
+    }
+    assert opts["filterIncompleteToolCalls"] is True
+    assert "processors" not in opts
+
+
+def _assert_default_observational_memory(om: dict) -> None:
+    assert om["enabled"] is True
+    assert om["retrieval"] == {"vector": True, "scope": "resource"}
+    assert om["activateAfterIdle"] == "5m"
+    assert om["activateOnProviderChange"] is True
+    assert om["observation"]["messageTokens"] == 60_000
+    assert om["observation"]["maxTokensPerBatch"] == 40_000
+    assert om["observation"]["bufferTokens"] == 0.2
+    assert om["observation"]["bufferActivation"] == 0.8
+    assert om["observation"]["blockAfter"] == 1.2
+    assert om["observation"]["previousObserverTokens"] == 10_000
+    assert om["observation"]["threadTitle"] is True
+    assert om["observation"]["modelSettings"]["maxOutputTokens"] == 100_000
+    assert om["reflection"]["observationTokens"] == 80_000
+    assert om["reflection"]["bufferActivation"] == 0.5
+    assert om["reflection"]["blockAfter"] == 1.2
+    assert om["reflection"]["modelSettings"]["maxOutputTokens"] == 100_000
+
+
+def test_default_observer_and_reflector_have_large_output_budgets(fake_hermes_home):
+    import mastra_options as mo
+
+    opts = mo.resolve_options()
+    _assert_default_processor_options(opts)
+    _assert_default_observational_memory(opts["observationalMemory"])
+
+
 def test_set_top_level_key_persists(fake_hermes_home):
     import mastra_options as mo
 

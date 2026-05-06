@@ -2,10 +2,12 @@
 
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { Agent } from "@mastra/core/agent";
-import { LibSQLStore } from "@mastra/libsql";
+import { ModelRouterEmbeddingModel } from "@mastra/core/llm";
+import { LibSQLStore, LibSQLVector } from "@mastra/libsql";
 import { Memory } from "@mastra/memory";
 import {
   DB_URL,
+  EMBEDDER_MODEL,
   OBSERVER_API_KEY,
   OBSERVER_NAME,
   OBSERVER_URL,
@@ -15,8 +17,11 @@ import {
   SHARE_BUDGET,
   TEMPORAL,
 } from "./config";
+import { buildMemoryOptions } from "./memory-options";
 
 export const storage = new LibSQLStore({ id: "hermes-mastra", url: DB_URL });
+export const vector = new LibSQLVector({ id: "hermes-mastra-vector", url: DB_URL });
+export const embedder = new ModelRouterEmbeddingModel(EMBEDDER_MODEL);
 
 const observerModel = createOpenAICompatible({
   name: "hermes-mastra-observer",
@@ -37,23 +42,18 @@ const proxyModel = createOpenAICompatible({
   apiKey: OBSERVER_API_KEY,
 })(proxyModelName);
 
+const memoryOptions = buildMemoryOptions({
+  observerModel,
+  reflectorModel,
+  shareBudget: SHARE_BUDGET,
+  temporal: TEMPORAL,
+});
+
 export const memory = new Memory({
   storage,
-  options: {
-    workingMemory: { enabled: true, scope: "resource" },
-    lastMessages: 20,
-    observationalMemory: {
-      observation: {
-        model: observerModel,
-        ...(SHARE_BUDGET ? { bufferTokens: false } : {}),
-      },
-      reflection: { model: reflectorModel },
-      scope: "thread",
-      temporalMarkers: TEMPORAL,
-      shareTokenBudget: SHARE_BUDGET,
-    },
-    generateTitle: false,
-  },
+  vector,
+  embedder,
+  options: memoryOptions as any,
 });
 
 export const _proxyAgent = new Agent({

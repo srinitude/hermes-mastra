@@ -26,6 +26,8 @@ export const TEMPORAL = (process.env.MASTRA_TEMPORAL ?? "true") === "true";
 export const SHARE_BUDGET = (process.env.MASTRA_SHARE_BUDGET ?? "false") === "true";
 export const RECALL_TOP_K = Number(process.env.MASTRA_RECALL_TOP_K ?? 4);
 
+export const EMBEDDER_MODEL = process.env.MASTRA_EMBEDDER_MODEL ?? "google/gemini-embedding-001";
+
 export const ARTIFACT_KINDS = new Set(["soul", "memory", "user", "agents"]);
 export const STARTED_AT = new Date().toISOString();
 

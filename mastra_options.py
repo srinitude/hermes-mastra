@@ -60,18 +60,64 @@ def _save_raw(values: dict) -> None:
 # Users may override any of these via set_option(); deletions via unset_option().
 # ---------------------------------------------------------------------------
 
+WORKING_MEMORY_TEMPLATE = """# Hermes Working Memory
+
+## Current User / Resource
+- Stable preferences:
+- Durable profile facts:
+- Active constraints:
+
+## Current Task State
+- Goal:
+- Important files, URLs, or IDs:
+- Open questions:
+
+## Update Rules
+- Keep this concise and current.
+- Preserve useful durable facts; remove stale task details when they stop mattering."""
+
+SEMANTIC_RECALL_DEFAULTS: dict[str, Any] = {
+    "topK": 5,
+    "messageRange": {"before": 2, "after": 2},
+    "scope": "resource",
+    "threshold": 0.65,
+}
+
 DEFAULTS: dict[str, Any] = {
+    "readOnly": False,
     "lastMessages": 20,
     "generateTitle": False,
-    "semanticRecall": False,
+    "filterIncompleteToolCalls": True,
+    "semanticRecall": SEMANTIC_RECALL_DEFAULTS,
     "workingMemory": {
         "enabled": True,
         "scope": "resource",
+        "template": WORKING_MEMORY_TEMPLATE,
     },
     "observationalMemory": {
+        "enabled": True,
         "scope": "thread",
         "temporalMarkers": True,
         "shareTokenBudget": False,
+        "retrieval": {"vector": True, "scope": "resource"},
+        "activateAfterIdle": "5m",
+        "activateOnProviderChange": True,
+        "observation": {
+            "messageTokens": 60_000,
+            "modelSettings": {"temperature": 0.3, "maxOutputTokens": 100_000},
+            "maxTokensPerBatch": 40_000,
+            "bufferTokens": 0.2,
+            "bufferActivation": 0.8,
+            "blockAfter": 1.2,
+            "previousObserverTokens": 10_000,
+            "threadTitle": True,
+        },
+        "reflection": {
+            "observationTokens": 80_000,
+            "modelSettings": {"temperature": 0, "maxOutputTokens": 100_000},
+            "bufferActivation": 0.5,
+            "blockAfter": 1.2,
+        },
     },
 }
 
@@ -79,7 +125,6 @@ DEFAULTS: dict[str, Any] = {
 _LEGACY_FIELD_MAP: dict[str, str] = {
     "temporal_markers": "observationalMemory.temporalMarkers",
     "share_token_budget": "observationalMemory.shareTokenBudget",
-    "recall_top_k": "lastMessages",
 }
 
 

@@ -61,3 +61,17 @@ def test_server_env_options_payload_is_present_even_with_defaults(fake_hermes_ho
     parsed = json.loads(env["MASTRA_OPTIONS_JSON"])
     assert parsed["observationalMemory"]["scope"] == "thread"
     assert parsed["workingMemory"]["enabled"] is True
+
+
+def test_server_env_maps_gemini_key_for_default_embedder(fake_hermes_home, monkeypatch):
+    import server_manager as sm
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_GENERATIVE_AI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "***")
+
+    env = sm.server_env(sm.load_config())
+
+    assert env["MASTRA_EMBEDDER_MODEL"] == "google/gemini-embedding-001"
+    assert env["GOOGLE_GENERATIVE_AI_API_KEY"] == "***"
