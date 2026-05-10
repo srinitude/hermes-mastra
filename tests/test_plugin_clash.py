@@ -162,7 +162,8 @@ def test_resource_id_format_is_hermes_profile():
 
     repo_root = Path(__file__).resolve().parents[1]
     src = (repo_root / "server" / "src" / "config.ts").read_text()
-    assert "`hermes:${profile" in src, "resourceFor() drifted from 'hermes:<profile>'"
+    assert 'startsWith("hermes:")' in src, "resourceFor() lost idempotent scoped profile handling"
+    assert "`hermes:${scoped}`" in src, "resourceFor() drifted from 'hermes:<profile>'"
 
 
 # --- 7. recall cache is instance-scoped ---------------------------------

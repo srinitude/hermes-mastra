@@ -27,7 +27,28 @@ from __future__ import annotations
 
 import copy
 import json
+from pathlib import Path
 from typing import Any
+
+
+def derive_resource_id(hermes_home: str, agent_identity: str | None = None) -> str:
+    """A06 contract: ``f"hermes:{agent_identity or 'default'}@{home_basename}"``.
+
+    Centralised so every Mastra surface (client.observe / recall / search /
+    semantic_search / working_memory / artifacts / agent_observers /
+    tool_observers) routes through ONE derivation rule. Profile isolation
+    (G5) requires both the per-profile ``agent_identity`` and the per-home
+    ``Path(hermes_home).name`` to be folded into the resourceId so two
+    Hermes installations never cross-pollinate via a default resourceId.
+    """
+    home_basename = Path(hermes_home).name if hermes_home else ""
+    identity = (agent_identity or "").strip() or "default"
+    if not home_basename:
+        raise ValueError(
+            f"derive_resource_id requires a non-empty hermes_home; got hermes_home={hermes_home!r}"
+        )
+    return f"hermes:{identity}@{home_basename}"
+
 
 RESILIENCE_KNOBS: dict[str, type[int] | type[float]] = {
     "breaker_threshold": int,

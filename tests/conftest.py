@@ -23,6 +23,21 @@ PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 if str(PLUGIN_ROOT) not in sys.path:
     sys.path.insert(0, str(PLUGIN_ROOT))
 
+# B00 — load the live Mastra server fixture file by absolute path so its
+# ``mastra_server`` / ``mastra_client`` fixtures are discoverable from every
+# test module. We avoid putting tests/ on sys.path (that would collide with
+# the plugin root __init__.py); instead we expose the fixtures here directly.
+import importlib.util as _ilu  # noqa: E402
+
+_spec = _ilu.spec_from_file_location(
+    "conftest_mastra", Path(__file__).resolve().parent / "conftest_mastra.py"
+)
+if _spec and _spec.loader:
+    _mod = _ilu.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    mastra_server = _mod.mastra_server
+    mastra_client = _mod.mastra_client
+
 
 @pytest.fixture
 def fake_hermes_home(tmp_path, monkeypatch):

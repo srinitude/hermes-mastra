@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "generated_for_task": "A05",
+  "principle": "Hot-path Hermes hooks must add zero blocking IO when memory.provider=mastra is selected; all real work is async/buffered/observed via Observer/Reflector.",
+  "baseline_baseline_collection_method": "tests/perf/bench_hot_path.py drives 200 simulated turns through MastraMemoryProvider with the live server fixture (B02) and emits per-hook p50/p99 ms in /Users/kiren/hermes-setup/memory/hermes-mastra/analysis/perf-baseline.json.",
+  "contract": {
+    "prefetch": {"contract": "cache-only return; HTTP work happens in queue_prefetch", "p50_ms": 5, "p99_ms": 5, "notes": "background thread populates self._prefetch_result; hot-path returns immediately"},
+    "queue_prefetch": {"contract": "fire-and-forget thread spawn", "p50_ms": 1, "p99_ms": 5, "notes": "must check circuit; never block"},
+    "sync_turn": {"contract": "enqueue to bounded queue; never await HTTP", "p50_ms": 5, "p99_ms": 10, "notes": "async_runner background queue (default size 1024) flushes to Mastra"},
+    "on_memory_write": {"contract": "enqueue mirror; MEMORY.md/USER.md disk write completes inline (existing behavior); Mastra mirror is enqueued", "p50_ms": 5, "p99_ms": 10, "notes": "G00 dual-write rule"},
+    "on_pre_compress": {"contract": "enqueue Reflector distill; return synchronous extraction string from cache (or empty if cache cold)", "p50_ms": 5, "p99_ms": 50, "notes": "G07 must boost density without violating budget"},
+    "on_session_end": {"contract": "enqueue session summary; do not block", "p50_ms": 10, "p99_ms": 50, "notes": "the summary itself is computed offline by the Reflector"},
+    "on_session_switch": {"contract": "update in-memory cached state; never block", "p50_ms": 5, "p99_ms": 10, "notes": "no fresh HTTP calls"},
+    "on_delegation": {"contract": "enqueue link observation", "p50_ms": 5, "p99_ms": 10, "notes": "preserve child_session_id"},
+    "on_turn_start": {"contract": "set self._last_user_message; non-blocking", "p50_ms": 1, "p99_ms": 5, "notes": "no HTTP calls"},
+    "system_prompt_block": {"contract": "synchronous string assembly only", "p50_ms": 1, "p99_ms": 5, "notes": "called per turn during prompt build"}
+  },
+  "hard_floor": {
+    "rule": "median per-turn overhead added by the plugin <= 50 ms p50 and <= 250 ms p99 vs. the built-in MEMORY.md/USER.md baseline (G3).",
+    "measurement_command": "/Users/kiren/.hermes/hermes-agent/venv/bin/python /Users/kiren/hermes-setup/memory/hermes-mastra/tests/perf/bench_hot_path.py"
+  },
+  "regression_gate": "X01 re-runs CC_PERF_BENCH after REFACTOR; perf-final.json diffed against perf-baseline.json must show no regression."
+}

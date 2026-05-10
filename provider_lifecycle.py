@@ -4,25 +4,40 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 from typing import Any
 
 # fmt: off
 try:
     from . import async_runner_loader as _runner_loader
+    from . import telemetry as _telemetry
     from .client import client_from_env
     from .lifecycle_helpers import alive as _alive
-    from .lifecycle_helpers import has_profile_kwarg as _has_profile_kwarg
+    from .lifecycle_helpers import is_recap_query as _is_recap
+    from .lifecycle_helpers import join_extraction as _join_extraction
+    from .lifecycle_helpers import merge_recap as _merge_recap
+    from .lifecycle_helpers import recent_message_digest as _recent_digest
+    from .lifecycle_helpers import refresh_recap as _refresh_recap
     from .lifecycle_helpers import resolve_profile as _resolve_profile
     from .lifecycle_helpers import safe_call as _safe_call
+    from .lifecycle_helpers import session_observation_bodies as _session_bodies
+    from .lifecycle_helpers import should_refresh_prefetch as _should_refresh_prefetch
     from .observation_dedup import ObservationDeduper
     from .server_manager import ensure_running, load_config
 except ImportError:
     import async_runner_loader as _runner_loader  # type: ignore[no-redef]
+    import telemetry as _telemetry  # type: ignore[no-redef]
     from client import client_from_env  # type: ignore[no-redef]
     from lifecycle_helpers import alive as _alive  # type: ignore[no-redef]
-    from lifecycle_helpers import has_profile_kwarg as _has_profile_kwarg
+    from lifecycle_helpers import is_recap_query as _is_recap
+    from lifecycle_helpers import join_extraction as _join_extraction
+    from lifecycle_helpers import merge_recap as _merge_recap
+    from lifecycle_helpers import recent_message_digest as _recent_digest
+    from lifecycle_helpers import refresh_recap as _refresh_recap
     from lifecycle_helpers import resolve_profile as _resolve_profile
     from lifecycle_helpers import safe_call as _safe_call
+    from lifecycle_helpers import session_observation_bodies as _session_bodies
+    from lifecycle_helpers import should_refresh_prefetch as _should_refresh_prefetch
     from observation_dedup import ObservationDeduper  # type: ignore[no-redef]
     from server_manager import ensure_running, load_config  # type: ignore[no-redef]
 # fmt: on
@@ -30,23 +45,13 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-def _enqueue(fn) -> None:
-    _runner_loader.submit(lambda: _safe_call(fn))
-
-
 def _safe_enqueue(fn) -> None:
     _runner_loader.submit(lambda: _safe_call(fn))
 
 
-def _write_profile_switch(client, thread: str, profile: str, msg: str) -> None:
-    def _write() -> bool:
-        return client.write_observation(thread, profile, msg, kind="profile_switch")
-
-    calls = getattr(client, "calls", None)
-    if isinstance(calls, list) and not hasattr(client, "delay"):
-        _safe_call(_write)
-        return
-    _safe_enqueue(_write)
+def _breaker_open(p) -> bool:
+    breaker = getattr(getattr(p, "_client", None), "_breaker", None)
+    return getattr(breaker, "state", "") == "OPEN"
 
 
 def _enqueue_recall(p) -> None:
@@ -77,7 +82,7 @@ def do_initialize(p, session_id: str, **kwargs) -> None:
     hermes_home = kwargs.get("hermes_home")
     if isinstance(hermes_home, str) and hermes_home:
         p._hermes_home = hermes_home
-    _enqueue(lambda: _bring_up_server(p))
+    _safe_enqueue(lambda: _bring_up_server(p))
 
 
 def _bring_up_server(p) -> None:
@@ -90,7 +95,7 @@ def _bring_up_server(p) -> None:
         logger.warning("mastra: server unavailable (%s) — provider will no-op", msg)
         return
     try:
-        client = client_from_env()
+        client = client_from_env(home_basename=Path(home_override).name if home_override else "")
         client.health()
         p._client = client
         _enqueue_recall(p)
@@ -110,8 +115,14 @@ def do_prefetch(p, query: str, *, session_id: str = "") -> str:
         p._recall_cache.clear_profile(p._profile)
     p._last_user_message = query
     p._recall_cache.set_current(p._profile, p._thread)
-    _enqueue_recall(p)
-    text = p._recall_cache.get(p._profile, p._thread)
+    cached = p._recall_cache.get(p._profile, p._thread)
+    if _breaker_open(p):
+        return f"### Observational memory ({p._profile})\n{cached}\n" if cached else ""
+    if _should_refresh_prefetch(p, cached):
+        _enqueue_recall(p)
+    if _is_recap(query):
+        _safe_enqueue(lambda: _refresh_recap(p, query, int(p._cfg.get("recall_top_k", 8))))
+    text = _merge_recap(cached, getattr(p, "_last_recap", "") or "")
     return f"### Observational memory ({p._profile})\n{text}\n" if text else ""
 
 
@@ -129,14 +140,15 @@ def do_pre_compress(p, messages: list[dict[str, Any]]) -> str:
     if not _alive(p):
         return ""
     client, thread, profile = p._client, p._thread, p._profile
-    text = p._recall_cache.get(p._profile, p._thread)
-    if text:
-        snapshot = text[:4000]
-        msg = f"Pre-compression snapshot:\n{snapshot}"
-        _safe_enqueue(lambda: client.write_observation(thread, profile, msg, kind="pre_compress"))
+    cached = p._recall_cache.get(p._profile, p._thread)
+    digest = _recent_digest(messages, limit=80)
+    extraction = _join_extraction(cached, digest)
+    if extraction:
+        body = f"Pre-compression snapshot:\n{extraction[:6000]}"
+        _safe_enqueue(lambda: client.write_observation(thread, profile, body, kind="pre_compress"))
     _safe_enqueue(lambda: client.flush(thread, profile))
     _enqueue_recall(p)
-    return f"Mastra observations before compression:\n{text}" if text else ""
+    return extraction
 
 
 # ----- write-side hooks ----------------------------------------------------
@@ -152,13 +164,14 @@ def do_sync_turn(p, user_content: str, assistant_content: str, *, session_id: st
             thread=thread, profile=profile, user=user_content, assistant=assistant_content
         )
     )
-    _enqueue_recall(p)
 
 
 def do_session_end(p, messages: list[dict[str, Any]]) -> None:
     if not _alive(p):
         return
     client, thread, profile = p._client, p._thread, p._profile
+    for b in _session_bodies(messages, max_count=20):
+        _safe_enqueue(lambda b=b: client.write_observation(thread, profile, b, kind="session_end"))
     _safe_enqueue(lambda: client.flush(thread, profile))
 
 
@@ -188,69 +201,24 @@ def do_memory_write(
         _safe_enqueue(lambda: client.write_observation(thread, profile, obs, kind="memory_write"))
 
 
-def do_delegation(p, task: str, result: str, *, child_session_id: str = "", **kwargs) -> None:
-    if not _alive(p):
-        return
-    client, thread, profile = p._client, p._thread, p._profile
-    obs = (
-        f"Delegated task: {task[:300]}\n"
-        f"Subagent ({child_session_id or 'unknown'}) returned: {result[:600]}"
-    )
-    _safe_enqueue(lambda: client.write_observation(thread, profile, obs, kind="delegation"))
-
-
-def do_session_switch(
-    p, new_session_id: str, *, parent_session_id: str = "", reset: bool = False, **kwargs
-) -> None:
-    if not _alive(p):
-        return
-    old_thread = p._thread
-    p._thread = new_session_id or p._thread
-    p._recall_cache.clear_profile(p._profile)
-    if reset or not parent_session_id:
-        _enqueue_recall(p)
-        return
-    client, new_thread, profile = p._client, p._thread, p._profile
-    msg = f"Session continues from prior thread {parent_session_id} (lineage)."
-    _safe_enqueue(lambda: client.write_observation(new_thread, profile, msg, kind="lineage"))
-    top_k = int(p._cfg.get("recall_top_k", 4))
-    _safe_enqueue(
-        lambda: p._recall_cache.store(
-            profile,
-            new_thread,
-            client.recall(parent_session_id or old_thread, profile, top_k),
-        )
-    )
-
-
-# ----- on_turn_start: synthetic profile-switch detection -------------------
-
-
-def do_turn_start(p, turn_number: int, message: str, **kwargs) -> None:
-    """Detect profile flips between turns and rebind to the new identity.
-
-    Hermes has no upstream profile-switch hook; we reuse on_turn_start.
-    """
-    if not _alive(p):
-        return
-    new_profile = _resolve_profile(kwargs)
-    if new_profile == "default" and not _has_profile_kwarg(kwargs):
-        return
-    old_profile = p._profile
-    if new_profile == old_profile:
-        return
-    p._recall_cache.clear_profile(old_profile)
-    p._profile = new_profile
-    client, thread = p._client, p._thread
-    msg = f"Profile switched from '{old_profile}' to '{new_profile}' (lineage)."
-    _write_profile_switch(client, thread, new_profile, msg)
-    _enqueue_recall(p)
-
-
 # ----- tool integration: see tool_observers.py + agent_observers.py.
-# Re-exported via a sibling shim to keep this file under the LOC budget.
+# Re-exported via sibling shims to keep this file under the LOC budget.
+
+for _f, _o in (
+    (do_prefetch, "prefetch"),
+    (do_sync_turn, "sync_turn"),
+    (do_pre_compress, "pre_compress"),
+    (do_memory_write, "memory_write"),
+):
+    globals()[_f.__name__] = _telemetry.timed(_o)(_f)
 
 try:
+    from . import lifecycle_session_hooks as _session_hooks
     from .lifecycle_observer_reexports import *  # noqa: F403
 except ImportError:
+    import lifecycle_session_hooks as _session_hooks  # type: ignore[no-redef]
     from lifecycle_observer_reexports import *  # type: ignore[no-redef]  # noqa: F403
+
+do_delegation = _session_hooks.do_delegation
+do_session_switch = _session_hooks.do_session_switch
+do_turn_start = _session_hooks.do_turn_start

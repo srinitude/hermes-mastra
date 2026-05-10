@@ -25,14 +25,8 @@ app.get("/api/memory/observations", async (c) => {
   const profile = c.req.query("profile") ?? "default";
   if (!thread) return c.json({ error: "thread required" }, 400);
   const resource = resourceFor(profile);
-  const result = await memory
-    .recall({
-      threadId: thread,
-      resourceId: resource,
-      threadConfig: { lastMessages: 200, observationalMemory: true },
-    } as any)
-    .catch(() => ({ observations: [] }));
-  return c.json({ thread, resource, observations: (result as any).observations ?? [] });
+  const observations = await collectThreadObservations(thread, resource);
+  return c.json({ thread, resource, observations });
 });
 
 app.get("/api/memory/search", async (c) => {

@@ -79,15 +79,15 @@ def install_dependencies() -> tuple[bool, str]:
 
 
 def is_running() -> bool:
+    cfg = load_config()
     pid = read_pid()
     if not pid:
-        cfg = load_config()
         return is_port_open(cfg["server_host"], int(cfg["server_port"]))
     try:
         os.kill(pid, 0)
-        return True
     except OSError:
         return False
+    return is_port_open(cfg["server_host"], int(cfg["server_port"]))
 
 
 def _spawn_bun(cfg: dict, log_path) -> tuple[subprocess.Popen | None, str | None]:

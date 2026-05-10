@@ -97,13 +97,48 @@ def _maybe_print_log() -> None:
         print(f"(could not read log: {exc})")
 
 
+def _print_profile_counters(client) -> None:
+    resources = client.list_resources()
+    print(f"resources:     {len(resources)}")
+    for resource in resources:
+        profile = _strip_resource(resource)
+        threads = client.list_threads(profile)
+        obs_total = sum(len(client.list_observations(_thread_id(t), profile)) for t in threads)
+        wm_size = len(client.get_working_memory(profile))
+        print(
+            f"  - {resource}: threads={len(threads)} observations={obs_total} working_memory_chars={wm_size}"
+        )
+
+
+def _strip_resource(resource: str) -> str:
+    return resource[len("hermes:") :] if resource.startswith("hermes:") else resource
+
+
+def _thread_id(t: dict) -> str:
+    return str(t.get("id") or t.get("threadId") or "")
+
+
+def _maybe_print_counters() -> None:
+    if not is_running():
+        return
+    try:
+        client = client_from_env()
+        _print_profile_counters(client)
+        client.close()
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"counters probe failed: {exc}")
+
+
 def cmd_status() -> int:
     cfg = load_config()
+    print("Provider:      mastra")
+    print("plugin:        installed")
     print(f"server_url:    {cfg['server_url']}")
     print(f"db_path:       {cfg['db_path']}")
     print(f"model:         {cfg['model_name']} via {cfg['model_url']}")
     print(f"running:       {is_running()}")
     _maybe_print_health(cfg)
+    _maybe_print_counters()
     _maybe_print_log()
     return 0
 

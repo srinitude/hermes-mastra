@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "generated_for_task": "A02",
+  "source_repo": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main",
+  "summary": {
+    "tool_count": 8,
+    "hooks_overridden_count": 11,
+    "client_methods_count": 7,
+    "hono_routes_count": 13
+  },
+  "tool_schemas": {
+    "definition_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/tool_schemas.py",
+    "register_function_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/provider_tools.py:153",
+    "tools": [
+      {"name": "mastra_recall", "kind": "thread-distilled-recall", "schema_line": 5},
+      {"name": "mastra_observe", "kind": "explicit-add", "schema_line": 29},
+      {"name": "mastra_search", "kind": "keyword-search", "schema_line": 58},
+      {"name": "mastra_semantic_search", "kind": "vector-search", "schema_line": 91},
+      {"name": "mastra_working_memory", "kind": "working-memory-read", "schema_line": 120},
+      {"name": "mastra_artifact_get", "kind": "artifact-read", "schema_line": 152},
+      {"name": "mastra_artifact_history", "kind": "artifact-history", "schema_line": 173},
+      {"name": "mastra_artifact_revert", "kind": "artifact-revert", "schema_line": 192}
+    ]
+  },
+  "memory_provider_hooks": {
+    "definition_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/__init__.py",
+    "lifecycle_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/provider_lifecycle.py",
+    "hooks": [
+      {"hook": "initialize", "delegate": "do_initialize", "delegate_line": 64},
+      {"hook": "prefetch", "delegate": "do_prefetch", "delegate_line": 105},
+      {"hook": "queue_prefetch", "delegate": "do_queue_prefetch", "delegate_line": 118},
+      {"hook": "on_pre_compress", "delegate": "do_pre_compress", "delegate_line": 128},
+      {"hook": "sync_turn", "delegate": "do_sync_turn", "delegate_line": 145},
+      {"hook": "on_session_end", "delegate": "do_session_end", "delegate_line": 158},
+      {"hook": "on_memory_write", "delegate": "do_memory_write", "delegate_line": 165},
+      {"hook": "on_delegation", "delegate": "do_delegation", "delegate_line": 191},
+      {"hook": "on_session_switch", "delegate": "do_session_switch", "delegate_line": 202},
+      {"hook": "on_turn_start", "delegate": "do_turn_start", "delegate_line": 229},
+      {"hook": "shutdown", "delegate": "MastraMemoryProvider.shutdown", "delegate_line": 195}
+    ]
+  },
+  "client_surface": {
+    "client_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/client.py",
+    "client_extra_path": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/client_extra.py",
+    "methods": [
+      {"name": "health", "line": "client.py:106"},
+      {"name": "recall", "line": "client.py:121"},
+      {"name": "search_observations", "line": "client_extra.py:17"},
+      {"name": "semantic_search", "line": "client_extra.py:23"},
+      {"name": "get_working_memory", "line": "client_extra.py:30"},
+      {"name": "upsert_artifact", "line": "client_extra.py:37"}
+    ],
+    "missing_for_dual_write": [
+      "set_working_memory(resource_id, action, target, content, metadata)",
+      "index_for_semantic_search(observation, resource_id)",
+      "buffer_to_disk_replay_log_on_open_circuit"
+    ]
+  },
+  "hono_server": {
+    "server_root": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/server/src",
+    "entry": "index.ts",
+    "routes_memory": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/server/src/routes-memory.ts",
+    "routes_artifacts": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/server/src/routes-artifacts.ts",
+    "endpoints": [
+      {"method": "GET", "path": "/health"},
+      {"method": "GET", "path": "/api/memory/healthz"},
+      {"method": "POST", "path": "/api/memory/messages"},
+      {"method": "GET", "path": "/api/memory/recall"},
+      {"method": "POST", "path": "/api/memory/working_memory"},
+      {"method": "GET", "path": "/api/memory/working_memory"},
+      {"method": "GET", "path": "/api/memory/semantic_search"},
+      {"method": "POST", "path": "/api/memory/observation"},
+      {"method": "POST", "path": "/api/memory/flush"},
+      {"method": "GET", "path": "/api/memory/artifact"},
+      {"method": "POST", "path": "/api/memory/artifact"},
+      {"method": "GET", "path": "/api/memory/artifact/history"},
+      {"method": "POST", "path": "/api/memory/artifact/revert"}
+    ]
+  },
+  "supporting_modules": {
+    "circuit_breaker": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/circuit_breaker.py",
+    "observation_dedup": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/observation_dedup.py",
+    "recall_cache": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/recall_cache.py",
+    "async_runner": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/async_runner.py",
+    "memory_rules": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/memory_rules.py",
+    "mastra_options": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/mastra_options.py",
+    "agent_observers": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/agent_observers.py",
+    "tool_observers": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/tool_observers.py",
+    "artifact_tools": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/artifact_tools.py",
+    "artifacts": "/Users/kiren/.opensrc/repos/github.com/srinitude/hermes-mastra/main/artifacts.py"
+  },
+  "gaps_versus_goal_contract": [
+    "tool_schemas.py exposes 8 tools; goal R06/G05 requires adding 4 more (mastra_profile, mastra_synthesize, mastra_browse, mastra_add_fact) for parity with bundled providers' profile/dialectic/browse/explicit-add tools.",
+    "client.py + client_extra.py do not expose set_working_memory(); on_memory_write currently only logs an observation (provider_lifecycle.do_memory_write) — required by G00 for dual-write parity.",
+    "do_pre_compress / do_session_end currently return empty / minimal output; required by G07 for extraction quality parity vs holographic + hindsight + honcho.",
+    "Mastra semantic_search returns null scores in the May 2026 baseline; requires Observer pipeline to embed observations into memory_messages — G06.",
+    "agent_observers + tool_observers do not yet feed every memory event from the per-turn taxonomy A04 — required by G07."
+  ]
+}

@@ -17,6 +17,12 @@ try:
         SEMANTIC_SEARCH_SCHEMA,
         WORKING_MEMORY_GET_SCHEMA,
     )
+    from .tool_schemas_parity import (  # type: ignore[no-redef]
+        ADD_FACT_SCHEMA,
+        BROWSE_SCHEMA,
+        PROFILE_SCHEMA,
+        SYNTHESIZE_SCHEMA,
+    )
 except ImportError:
     from config_schema import get_config_schema  # type: ignore[no-redef]  # noqa: F401
     from tool_schemas import (  # type: ignore[no-redef]
@@ -28,6 +34,12 @@ except ImportError:
         SEARCH_SCHEMA,
         SEMANTIC_SEARCH_SCHEMA,
         WORKING_MEMORY_GET_SCHEMA,
+    )
+    from tool_schemas_parity import (  # type: ignore[no-redef]
+        ADD_FACT_SCHEMA,
+        BROWSE_SCHEMA,
+        PROFILE_SCHEMA,
+        SYNTHESIZE_SCHEMA,
     )
 try:
     from tools.registry import tool_error  # Hermes-provided
@@ -65,22 +77,35 @@ def _coerce_one(key: str, value: Any) -> Any:
     return value
 
 
-def handle_tool_call(p, tool_name: str, args: dict[str, Any]) -> str:  # noqa: PLR0911
+def _direct_tool_handlers() -> dict[str, Any]:
+    return {
+        "mastra_recall": _do_recall,
+        "mastra_observe": _do_observe,
+        "mastra_search": _do_search,
+        "mastra_semantic_search": _extra().do_semantic_search,
+        "mastra_working_memory": _extra().do_working_memory_get,
+    }
+
+
+def handle_tool_call(p, tool_name: str, args: dict[str, Any]) -> str:
     if not p._client:
         return tool_error("mastra server is not running")
-    if tool_name == "mastra_recall":
-        return _do_recall(p, args)
-    if tool_name == "mastra_observe":
-        return _do_observe(p, args)
-    if tool_name == "mastra_search":
-        return _do_search(p, args)
-    if tool_name == "mastra_semantic_search":
-        return _do_semantic_search(p, args)
-    if tool_name == "mastra_working_memory":
-        return _do_working_memory_get(p, args)
+    handler = _direct_tool_handlers().get(tool_name)
+    if handler is not None:
+        return handler(p, args)
     if tool_name in {"mastra_artifact_get", "mastra_artifact_history", "mastra_artifact_revert"}:
         return _dispatch_artifact(p, tool_name, args)
+    if tool_name in {"mastra_profile", "mastra_synthesize", "mastra_browse", "mastra_add_fact"}:
+        return _dispatch_parity(p, tool_name, args)
     return tool_error(f"unknown tool: {tool_name}")
+
+
+def _dispatch_parity(p, tool_name: str, args: dict[str, Any]) -> str:
+    try:
+        from .provider_tools_parity import dispatch as _d
+    except ImportError:
+        from provider_tools_parity import dispatch as _d  # type: ignore[no-redef]
+    return _d(p, tool_name, args)
 
 
 def _dispatch_artifact(p, tool_name: str, args: dict[str, Any]) -> str:
@@ -160,44 +185,16 @@ def tool_schemas() -> list[dict[str, Any]]:
         ARTIFACT_GET_SCHEMA,
         ARTIFACT_HISTORY_SCHEMA,
         ARTIFACT_REVERT_SCHEMA,
+        PROFILE_SCHEMA,
+        SYNTHESIZE_SCHEMA,
+        BROWSE_SCHEMA,
+        ADD_FACT_SCHEMA,
     ]
 
 
-def _do_semantic_search(p, args: dict[str, Any]) -> str:
-    query = (args.get("query") or "").strip()
-    if not query:
-        return tool_error("missing required parameter: query")
-    limit = max(1, min(int(args.get("limit", 8)), 20))
+def _extra():
     try:
-        results = p._client.semantic_search(query=query, profile=p._profile, limit=limit)
-    except Exception as exc:
-        return tool_error(f"semantic_search failed: {exc}")
-    results = list(results or [])
-    payload: dict[str, Any] = {
-        "profile": p._profile,
-        "query": query,
-        "count": len(results),
-        "observations": results,
-    }
-    if not results:
-        payload["message"] = (
-            "no semantic matches — vector store may be unconfigured; "
-            "fall back to `mastra_search` for keyword search"
-        )
-    return json.dumps(payload)
-
-
-def _do_working_memory_get(p, args: dict[str, Any]) -> str:
-    try:
-        text = p._client.get_working_memory(profile=p._profile)
-    except Exception as exc:
-        return tool_error(f"working_memory read failed: {exc}")
-    payload: dict[str, Any] = {
-        "profile": p._profile,
-        "working_memory": text or "",
-    }
-    if not text:
-        payload["message"] = (
-            "working memory empty — built-in MEMORY.md / USER.md is the canonical store"
-        )
-    return json.dumps(payload)
+        from . import provider_tools_extra as _e  # type: ignore[no-redef]
+    except ImportError:
+        import provider_tools_extra as _e  # type: ignore[no-redef]
+    return _e

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "generated_for_task": "A04",
+  "principle": "Every meaningful Hermes memory event must traverse the hermes-mastra plugin and land on at least one Mastra surface.",
+  "events": [
+    {"id": "E01", "name": "user_message_stored", "trigger": "every user turn", "mastra_surface": "observational_memory", "carrier_hook": "sync_turn", "guard": "redaction filter pre-write"},
+    {"id": "E02", "name": "assistant_message_stored", "trigger": "every assistant turn", "mastra_surface": "observational_memory", "carrier_hook": "sync_turn", "guard": "redaction filter pre-write"},
+    {"id": "E03", "name": "tool_call_summary", "trigger": "post_tool_call hook", "mastra_surface": "observational_memory", "carrier_hook": "tool_observers", "guard": "skip if tool is mastra_*"},
+    {"id": "E04", "name": "tool_result_summary", "trigger": "post_tool_call hook", "mastra_surface": "observational_memory", "carrier_hook": "tool_observers", "guard": "redact secrets in result body"},
+    {"id": "E05", "name": "memory_tool_add", "trigger": "memory tool add action", "mastra_surface": "working_memory", "carrier_hook": "on_memory_write", "guard": "dual-write MEMORY.md/USER.md AND working memory"},
+    {"id": "E06", "name": "memory_tool_replace", "trigger": "memory tool replace action", "mastra_surface": "working_memory", "carrier_hook": "on_memory_write", "guard": "dual-write"},
+    {"id": "E07", "name": "memory_tool_remove", "trigger": "memory tool remove action", "mastra_surface": "working_memory", "carrier_hook": "on_memory_write", "guard": "dual-write"},
+    {"id": "E08", "name": "MEMORY_md_disk_write", "trigger": "any built-in MEMORY.md edit", "mastra_surface": "working_memory mirror + artifact_store version", "carrier_hook": "on_memory_write", "guard": "atomic"},
+    {"id": "E09", "name": "USER_md_disk_write", "trigger": "any built-in USER.md edit", "mastra_surface": "working_memory mirror + artifact_store version", "carrier_hook": "on_memory_write", "guard": "atomic"},
+    {"id": "E10", "name": "on_pre_compress_invocation", "trigger": "Hermes context_compressor pre-pass", "mastra_surface": "observational_memory (Reflector distill)", "carrier_hook": "on_pre_compress", "guard": "must return text for compression prompt"},
+    {"id": "E11", "name": "on_session_end_invocation", "trigger": "session end / reset / branch", "mastra_surface": "observational_memory (Reflector summary)", "carrier_hook": "on_session_end", "guard": "redact secrets; bound token cost"},
+    {"id": "E12", "name": "on_session_switch_invocation", "trigger": "/resume, /branch, /reset, /new, gateway", "mastra_surface": "observational_memory (transition marker)", "carrier_hook": "on_session_switch", "guard": "do not tear down provider"},
+    {"id": "E13", "name": "on_delegation_invocation", "trigger": "subagent delegation", "mastra_surface": "observational_memory (parent+child link)", "carrier_hook": "on_delegation", "guard": "preserve child_session_id"},
+    {"id": "E14", "name": "gateway_message_delivery", "trigger": "pre_gateway_dispatch hook", "mastra_surface": "observational_memory (delivery log)", "carrier_hook": "gateway_observers", "guard": "redact PII"},
+    {"id": "E15", "name": "cron_job_invocation", "trigger": "cron-managed turn end", "mastra_surface": "observational_memory + summary observation", "carrier_hook": "tool_observers", "guard": "rate-limit to avoid noisy floods"},
+    {"id": "E16", "name": "skill_load", "trigger": "skill SKILL.md import", "mastra_surface": "observational_memory (skill anchor)", "carrier_hook": "tool_observers", "guard": "deduplicate by skill name"},
+    {"id": "E17", "name": "skill_view_supporting_file_load", "trigger": "skill auxiliary file read", "mastra_surface": "observational_memory (file anchor)", "carrier_hook": "tool_observers", "guard": "skip binary blobs"},
+    {"id": "E18", "name": "what_did_i_do_recap_query", "trigger": "user asks recap/yesterday/last time", "mastra_surface": "semantic_recall_index probe; FTS5 fallback", "carrier_hook": "prefetch", "guard": "Mastra-first; FTS only if circuit open or empty"},
+    {"id": "E19", "name": "artifact_revert", "trigger": "mastra_artifact_revert tool call", "mastra_surface": "artifact_store version + working_memory mirror", "carrier_hook": "provider_tools.handle_tool_call", "guard": "atomic + cache refresh"}
+  ],
+  "summary": {
+    "total_events": 19,
+    "events_per_surface": {
+      "observational_memory": 13,
+      "working_memory": 5,
+      "artifact_store": 3,
+      "semantic_recall_index": 1
+    }
+  }
+}

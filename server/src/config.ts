@@ -31,7 +31,10 @@ export const EMBEDDER_MODEL = process.env.MASTRA_EMBEDDER_MODEL ?? "google/gemin
 export const ARTIFACT_KINDS = new Set(["soul", "memory", "user", "agents"]);
 export const STARTED_AT = new Date().toISOString();
 
-export const resourceFor = (profile: string) => `hermes:${profile || "default"}`;
+export const resourceFor = (profile: string) => {
+  const scoped = profile || "default";
+  return scoped.startsWith("hermes:") ? scoped : `hermes:${scoped}`;
+};
 export const isAuthed = (auth: string | undefined) =>
   !AUTH_TOKEN || auth === `Bearer ${AUTH_TOKEN}`;
 export const artifactId = (kind: string, profile: string) =>

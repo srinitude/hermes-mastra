@@ -40,7 +40,23 @@ export const blockMetadata = (kind: string, profile: string, path?: string) => (
 
 export type ObsHit = { thread: string; text: string; kind: string | null };
 
-export const obsTextOf = (o: any): string => (o?.text ?? o?.content ?? "").toString();
+export const msgText = (m: any): string => {
+  const c = m?.content;
+  if (typeof c === "string") return c;
+  if (typeof c?.content === "string") return c.content;
+  if (Array.isArray(c?.parts) && typeof c.parts[0]?.text === "string") return c.parts[0].text;
+  return (m?.text ?? "").toString();
+};
+
+export const isObservationMessage = (m: any): boolean =>
+  (m?.role === "assistant" || m?.role === "system") && msgText(m).startsWith("[OBSERVATION");
+
+const _kindOf = (text: string): string | null => {
+  const m = /^\[OBSERVATION(?::([^\]]+))?\]/.exec(text);
+  return m?.[1] ?? null;
+};
+
+export const obsTextOf = (o: any): string => (o?.text ?? o?.content ?? msgText(o) ?? "").toString();
 
 export async function collectThreadObservations(threadId: string, resource: string) {
   const result = await memory
@@ -49,8 +65,12 @@ export async function collectThreadObservations(threadId: string, resource: stri
       resourceId: resource,
       threadConfig: { lastMessages: 200, observationalMemory: true },
     } as any)
-    .catch(() => ({ observations: [] as any[] }));
-  return ((result as any).observations ?? []) as any[];
+    .catch(() => ({ messages: [] as any[] }));
+  const messages = (result as any).messages ?? [];
+  return messages.filter(isObservationMessage).map((m: any) => {
+    const text = msgText(m);
+    return { role: "system", text, content: text, kind: _kindOf(text) };
+  });
 }
 
 export function matchesIn(
