@@ -97,7 +97,7 @@ Save the export somewhere durable. mastra won't read it directly, but if you eve
 - **Per-profile resource isolation.** Hermes profiles map cleanly to Mastra `resourceId`s. Every profile that activates the plugin gets its own observation namespace under one shared Bun server with zero cross-leakage.
 - **Eight explicit memory tools** (`mastra_recall`, `mastra_search`, `mastra_semantic_search`, `mastra_observe`, `mastra_working_memory`, `mastra_artifact_get`, `mastra_artifact_history`, `mastra_artifact_revert`) plus the existing `session_search` — the agent gets clear guidance on which to use for each kind of question. Per-tool spec: [`README.md → Tools the agent gets`](../README.md#tools-the-agent-gets).
 - **Capacity-aware system prompt.** When `MEMORY.md` or `USER.md` is ≥50% full, the system prompt adds a hint telling the agent to use mastra for overflow.
-- **Bundled `SKILL.md`.** `/mastra` works in any Hermes session.
+- **Bundled `skills/mastra/SKILL.md`.** `/mastra` works in any Hermes session.
 
 ### What you give up (or gain by losing)
 

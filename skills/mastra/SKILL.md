@@ -4,7 +4,13 @@ description: "Mastra memory provider for Hermes — observation log, semantic re
 version: 1.0.0
 metadata:
   hermes:
-    tags: [memory, mastra, observability, recall, prompt-blocks, versioning]
+    tags:
+      - memory
+      - mastra
+      - observability
+      - recall
+      - prompt-blocks
+      - versioning
     category: memory
     requires_tools:
       - mastra_recall
@@ -34,7 +40,7 @@ Load this skill (or just call the tools directly) when:
 
 ## The 8 tools at a glance
 
-The full per-tool spec — parameters, return shapes, costs, pitfalls — lives in the plugin's [README.md](./README.md#tools-the-agent-gets). Quick reference here:
+The full per-tool spec — parameters, return shapes, costs, pitfalls — lives in the plugin repository README: https://github.com/srinitude/hermes-mastra#tools-the-agent-gets. Quick reference here:
 
 ### Recall + search
 

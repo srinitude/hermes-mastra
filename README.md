@@ -1,5 +1,6 @@
 # hermes-mastra
 
+[![skills.sh](https://skills.sh/b/srinitude/hermes-mastra)](https://skills.sh/s/srinitude/hermes-mastra)
 [![Quality](https://github.com/srinitude/hermes-mastra/actions/workflows/quality.yml/badge.svg)](https://github.com/srinitude/hermes-mastra/actions/workflows/quality.yml)
 [![Upstream Watch](https://github.com/srinitude/hermes-mastra/actions/workflows/upstream-watch.yml/badge.svg)](https://github.com/srinitude/hermes-mastra/actions/workflows/upstream-watch.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)

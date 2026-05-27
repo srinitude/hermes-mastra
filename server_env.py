@@ -70,6 +70,8 @@ def _attach_embedder(env: dict) -> None:
     )
     if google_key and "GOOGLE_GENERATIVE_AI_API_KEY" not in env:
         env["GOOGLE_GENERATIVE_AI_API_KEY"] = google_key
+    if google_key and "GOOGLE_API_KEY" not in env:
+        env["GOOGLE_API_KEY"] = google_key
 
 
 def _attach_options_payload(env: dict) -> None:

@@ -4,8 +4,8 @@ Provides:
   * ``mastra_server``   (session-scoped): spawns the Bun/Hono Mastra server
     once per pytest session against an isolated $HERMES_HOME, using
     ``test_mastra.json`` as the deterministic template (Observer/Reflector
-    via Venice; semantic embedder = OpenAI when available, otherwise
-    Google AI via ``GEMINI_API_KEY`` → ``GOOGLE_GENERATIVE_AI_API_KEY`` mapping).
+    via Venice; semantic embedder = OpenAI when available, otherwise Google AI
+    via ``GEMINI_API_KEY`` mapped to both Google API key env names).
   * ``mastra_client``   (function-scoped): yields a fresh ``MastraClient``
     bound to that server.
 
@@ -121,6 +121,8 @@ def _wire_server_env(home: Path) -> None:
     google_key = _resolve_google_key()
     if google_key and "GOOGLE_GENERATIVE_AI_API_KEY" not in os.environ:
         os.environ["GOOGLE_GENERATIVE_AI_API_KEY"] = google_key
+    if google_key and "GOOGLE_API_KEY" not in os.environ:
+        os.environ["GOOGLE_API_KEY"] = google_key
     current_model = os.environ.get("MASTRA_EMBEDDER_MODEL", "")
     if openai_key and (not current_model or current_model.startswith("google/")):
         os.environ["MASTRA_EMBEDDER_MODEL"] = "openai/text-embedding-3-small"
@@ -158,6 +160,7 @@ def _saved_server_env() -> dict[str, str | None]:
         "HERMES_HOME",
         "VENICE_API_KEY",
         "GOOGLE_GENERATIVE_AI_API_KEY",
+        "GOOGLE_API_KEY",
         "MASTRA_EMBEDDER_MODEL",
         "OPENAI_API_KEY",
     )

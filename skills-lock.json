@@ -1,0 +1,18 @@
+{
+  "skills": [
+    {
+      "name": "mastra",
+      "version": "1.0.0",
+      "path": "skills/mastra",
+      "description": "Mastra memory provider for Hermes with observation logs, semantic recall, working memory, and versioned identity-file storage.",
+      "tags": [
+        "hermes-agent",
+        "mastra",
+        "memory",
+        "observability",
+        "recall",
+        "prompt-blocks"
+      ]
+    }
+  ]
+}

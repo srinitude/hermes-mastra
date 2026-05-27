@@ -16,7 +16,7 @@ integration tier:
      `kind="skill_loaded"` observation so future sessions know which
      skills were used and when.
 
-  C. The plugin ships its own `SKILL.md` so `/mastra` works in any
+  C. The plugin ships its own `skills/mastra/SKILL.md` so `/mastra` works in any
      Hermes session (skills auto-discover).
 """
 
@@ -172,13 +172,13 @@ def test_skill_loaded_non_blocking(provider, slow_client):
 # ---- C. SKILL.md ships with the plugin ----------------------------------
 
 
-def test_skill_md_exists_in_plugin_root():
-    """The plugin ships its own SKILL.md so users can `/mastra` to load
+def test_skill_md_exists_in_plugin_skill_dir():
+    """The plugin ships its own skill package so users can `/mastra` to load
     context-aware guidance about when to use recall/search/observe."""
     from pathlib import Path
 
     plugin_root = Path(__file__).resolve().parents[1]
-    skill_md = plugin_root / "SKILL.md"
+    skill_md = plugin_root / "skills" / "mastra" / "SKILL.md"
     assert skill_md.exists(), (
         f"SKILL.md missing at {skill_md} — the plugin should auto-register "
         "as a skill so users get `/mastra` for free."
@@ -187,7 +187,7 @@ def test_skill_md_exists_in_plugin_root():
 
 def test_skill_md_has_required_frontmatter():
     plugin_root = Path(__file__).resolve().parents[1]
-    skill_md = plugin_root / "SKILL.md"
+    skill_md = plugin_root / "skills" / "mastra" / "SKILL.md"
     text = skill_md.read_text(encoding="utf-8")
     assert text.startswith("---\n"), "SKILL.md must start with YAML frontmatter"
     fm_end = text.find("\n---\n", 4)
@@ -200,14 +200,14 @@ def test_skill_md_has_required_frontmatter():
 
 def test_skill_md_documents_three_tools():
     plugin_root = Path(__file__).resolve().parents[1]
-    body = (plugin_root / "SKILL.md").read_text(encoding="utf-8")
+    body = (plugin_root / "skills" / "mastra" / "SKILL.md").read_text(encoding="utf-8")
     for tool in ("mastra_recall", "mastra_search", "mastra_observe"):
         assert tool in body, f"SKILL.md must document {tool}"
 
 
 def test_skill_md_cross_references_session_search():
     plugin_root = Path(__file__).resolve().parents[1]
-    body = (plugin_root / "SKILL.md").read_text(encoding="utf-8")
+    body = (plugin_root / "skills" / "mastra" / "SKILL.md").read_text(encoding="utf-8")
     assert "session_search" in body, (
         "SKILL.md should explain how mastra_* relates to session_search "
         "so users learn the recall hierarchy."

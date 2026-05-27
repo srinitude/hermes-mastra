@@ -75,3 +75,4 @@ def test_server_env_maps_gemini_key_for_default_embedder(fake_hermes_home, monke
 
     assert env["MASTRA_EMBEDDER_MODEL"] == "google/gemini-embedding-001"
     assert env["GOOGLE_GENERATIVE_AI_API_KEY"] == "***"
+    assert env["GOOGLE_API_KEY"] == "***"

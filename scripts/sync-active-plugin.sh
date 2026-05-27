@@ -15,11 +15,16 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="$HOME/.hermes/hermes-agent/plugins/memory/mastra"
+DEST_PARENT="$(dirname "$DEST")"
 
 if [ ! -d "$DEST" ]; then
-  echo "✖ Hermes plugin directory not found at $DEST"
-  echo "  Is Hermes installed? Try: hermes plugins install srinitude/hermes-mastra"
-  exit 2
+  if [ -d "$DEST_PARENT" ]; then
+    mkdir -p "$DEST"
+  else
+    echo "✖ Hermes memory plugin directory not found at $DEST_PARENT"
+    echo "  Is Hermes installed? Try: hermes plugins install srinitude/hermes-mastra"
+    exit 2
+  fi
 fi
 
 # Clear stale pyc cache so Hermes recompiles after the sync.

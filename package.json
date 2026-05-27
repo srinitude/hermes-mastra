@@ -1,0 +1,30 @@
+{
+  "name": "@srinitude/hermes-mastra",
+  "version": "1.0.0",
+  "description": "Mastra memory provider skill for Hermes with recall, search, observation, working memory, and versioned identity artifacts.",
+  "license": "MIT",
+  "author": "Kiren Srinivasan <kiren@fantasymetals.com>",
+  "homepage": "https://github.com/srinitude/hermes-mastra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srinitude/hermes-mastra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/srinitude/hermes-mastra/issues"
+  },
+  "keywords": [
+    "hermes-agent",
+    "mastra",
+    "memory",
+    "agent-skill",
+    "skills.sh",
+    "observability",
+    "recall"
+  ],
+  "files": [
+    "skills/",
+    "skills-lock.json",
+    "LICENSE",
+    "README.md"
+  ]
+}
