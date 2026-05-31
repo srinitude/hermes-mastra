@@ -145,6 +145,14 @@ def test_load_memory_provider_via_hermes_helper_smoke():
         "assert isinstance(ok, bool); "
         "print('is_available=' + str(ok))"
     )
+    # Pin HERMES_HOME to the real home so the loader scans the installed
+    # ~/.hermes/plugins/. Other fixtures (mastra_server) set HERMES_HOME to
+    # a temp dir without restoring it; the child inherits os.environ, so an
+    # explicit value keeps this subprocess independent of suite ordering.
+    import os as _os
+
+    child_env = dict(_os.environ)
+    child_env["HERMES_HOME"] = str(Path.home() / ".hermes")
     result = subprocess.run(
         [str(venv_python), "-c", code],
         capture_output=True,
@@ -152,6 +160,7 @@ def test_load_memory_provider_via_hermes_helper_smoke():
         cwd=str(hermes_root),
         timeout=30,
         check=False,
+        env=child_env,
     )
     assert result.returncode == 0, (
         f"plugin failed under Hermes venv:\nstdout: {result.stdout}\nstderr: {result.stderr}"

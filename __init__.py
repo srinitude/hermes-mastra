@@ -14,7 +14,19 @@ The real work lives in sibling modules (each ≤200 LOC, each construct ≤30 LO
 from __future__ import annotations
 
 import logging
+import os
+import sys
 from typing import Any
+
+# Make this plugin importable under any module namespace the host loader
+# chooses. The discovery loader (hermes_cli doctor / memory status / plugin
+# list) imports user plugins under a synthetic ``_hermes_user_memory.<name>``
+# namespace and pre-execs sibling modules WITHOUT this directory on sys.path,
+# so their absolute-import fallbacks (``import client`` etc.) fail and the
+# provider is reported "not found". Putting our own directory on sys.path lets
+# every absolute-import fallback in this package resolve cleanly, so discovery
+# loads the provider the same way the live agent runtime already does.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
     from . import async_runner
