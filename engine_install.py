@@ -55,6 +55,24 @@ def _load_cfg() -> dict:
         return {}
 
 
+def _main_compression_threshold() -> float | None:
+    """Read ``compression.threshold`` from the main Hermes config.
+
+    Returns the configured fraction (e.g. 0.9) or ``None`` when it cannot
+    be read, so the delegate keeps its own default. The plugin's own
+    ``load_config`` only exposes the ``mastra`` block, so this reaches the
+    host config loader directly. Failure-isolated by design.
+    """
+    try:
+        from hermes_cli.config import load_config  # noqa: PLC0415
+
+        comp = (load_config() or {}).get("compression", {})
+        value = comp.get("threshold") if isinstance(comp, dict) else None
+        return float(value) if value is not None else None
+    except Exception:  # pragma: no cover — defensive
+        return None
+
+
 def _build_engine(provider: Any, cfg: dict):
     """Construct ``MastraContextEngine(ContextCompressor(...))``."""
     try:
@@ -65,7 +83,14 @@ def _build_engine(provider: Any, cfg: dict):
         )
     from agent.context_compressor import ContextCompressor  # noqa: PLC0415
 
-    delegate = ContextCompressor(model="placeholder", quiet_mode=True)
+    # Honor the user's `compression.threshold` from the main Hermes config.
+    # Without this the delegate falls back to ContextCompressor's 0.50
+    # default, ignoring the configured value (e.g. 0.9 -> compacts at 50%).
+    threshold = _main_compression_threshold()
+    delegate_kwargs: dict = {"model": "placeholder", "quiet_mode": True}
+    if threshold is not None:
+        delegate_kwargs["threshold_percent"] = threshold
+    delegate = ContextCompressor(**delegate_kwargs)
     return MastraContextEngine(
         delegate,
         fetch_observations=_fetch_factory(provider),
