@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-31
+
+### Added
+
+- **Mastra is now a first-class Hermes memory provider.** Memory reads, writes,
+  recall, observation, telemetry, and runtime status route through the plugin
+  while preserving local fallback behavior. Adds live integration, parity,
+  latency, profile-isolation, redaction, observability, and end-to-end
+  regression coverage.
+- **Nested skill layout (`skills/mastra/`)** mirroring the design-craft layout,
+  plus root `package.json` metadata for skills.sh discovery, with docs/tests
+  updated for the nested path and Google embedding credentials mapped to the
+  env vars current Mastra source expects.
+
+### Fixed
+
+- **Discovery-loader namespace import.** `hermes doctor` / `memory status` /
+  `hermes plugins` no longer report the provider as "not found" / "activate via
+  config" when `memory.provider: mastra` is set. The plugin now prepends its own
+  directory to `sys.path` so absolute-import fallbacks resolve under the
+  loader's synthetic `_hermes_user_memory.<name>` namespace — no host package
+  edits. Hardens the end-to-end smoke test to pin `HERMES_HOME`.
+- **Context-engine compression threshold.** The Mastra `ContextEngine` wrapper
+  now honors the host's `compression.threshold` instead of falling back to the
+  0.50 default, so a 272K-window model compacts at the configured fraction
+  (e.g. 0.90 → 244,800 tokens) rather than 136,000. Failure-isolated: any
+  config read error leaves the delegate default untouched.
+
 ## [0.2.2] - 2026-05-06
 
 ### Added
